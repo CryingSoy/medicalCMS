@@ -18,7 +18,6 @@ app.use(session({
 app.use('/admin', require('./middlewares/user'))
 app.use('/admin', require('./controllers'))
 
-
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`)
 })
