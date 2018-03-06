@@ -2,6 +2,8 @@
   <el-menu class="navbar" mode="horizontal">
     <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
     <breadcrumb></breadcrumb>
+    <span class="admininfo-level">{{ level }}</span>
+    <span class="admininfo">{{ name }}</span>
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
         <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
@@ -34,7 +36,9 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'name',
+      'level'
     ])
   },
   methods: {
@@ -55,6 +59,16 @@ export default {
   height: 50px;
   line-height: 50px;
   border-radius: 0px !important;
+  .admininfo {
+    position: absolute;
+    right: 85px;
+    font-size: 15px;
+    &-level {
+      position: absolute;
+      right: 135px;
+      font-size: 15px;
+    }
+  }
   .hamburger-container {
     line-height: 58px;
     height: 50px;
