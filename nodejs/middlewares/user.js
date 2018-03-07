@@ -11,7 +11,8 @@ const authMap = {
   '超级管理员': [
     '/user/addAdminOrDoctor',
     '/user/removeUser',
-    '/user/getUserByType'
+    '/user/getUserByType',
+    '/user/resetPassword'
   ],
   '校医': []
 }

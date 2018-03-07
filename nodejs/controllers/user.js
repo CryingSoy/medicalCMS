@@ -262,4 +262,54 @@ router.get('/getUserByType', (req, res) => {
       })
     })
 })
+
+// 后台用户重置密码
+router.post('/resetPassword', (req, res) => {
+  const data = req.body
+  if (!data.username) {
+    res.json({
+      code: -1,
+      msg: '用户名为空'
+    })
+    return
+  }
+  if (!data.password) {
+    res.json({
+      code: -1,
+      msg: '密码为空'
+    })
+    return
+  }
+  if (data.password.length < 6 || data.password.length > 16) {
+    res.json({
+      code: -1,
+      msg: '密码长度必须是6到16'
+    })
+    return
+  }
+  (async function() {
+    try {
+      const flag = await user.queryUsername(data.username)
+      if (!flag) {
+        data.password = utils.changeWithMD5(data.password)
+        await user.resetPassword(data)
+        res.json({
+          code: 1,
+          msg: `${data.username}密码修改成功`
+        })
+      } else {
+        res.json({
+          code: -1,
+          msg: '用户名不存在'
+        })
+      }
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '服务器错误'
+      })
+    }
+  })()
+})
 module.exports = router

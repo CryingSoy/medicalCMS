@@ -162,3 +162,19 @@ exports.getUser = type => {
     }
   })
 }
+
+exports.resetPassword = data => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `update adminUser set password = '${data.password}' where username = '${data.username}'`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve()
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
