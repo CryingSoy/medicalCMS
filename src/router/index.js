@@ -26,14 +26,15 @@ export const constantRouterMap = [
   { path: '/404', component: () => import('@/views/404'), hidden: true },
 
   {
-    path: '/',
+    path: '',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/admin/dashboard',
     name: 'Dashboard',
-    hidden: true,
+    // hidden: true,
     children: [{
-      path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
+      path: 'admin/dashboard',
+      component: () => import('@/views/dashboard/index'),
+      meta: { title: '首页', icon: 'dashboard' }
     }]
   },
 
@@ -45,22 +46,28 @@ export const constantRouterMap = [
     meta: { title: '用户管理', icon: 'example' },
     children: [
       {
+        path: 'admininfo',
+        name: 'admininfo',
+        component: () => import('@/views/user/admin-user/index'),
+        meta: { title: '管理员', icon: 'people' }
+      },
+      {
         path: 'doctorinfo',
         name: 'doctorinfo',
-        component: () => import('@/views/table/index'),
-        meta: { title: '校医管理', icon: 'table' }
+        component: () => import('@/views/user/doctor-user/index'),
+        meta: { title: '校医', icon: 'table' }
       },
       {
         path: 'studentinfo',
         name: 'studentinfo',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '学生管理', icon: 'tree' }
+        component: () => import('@/views/user/student-user/index'),
+        meta: { title: '学生', icon: 'tree' }
       },
       {
         path: 'teacherinfo',
         name: 'teacherinfo',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '教师管理', icon: 'user' }
+        component: () => import('@/views/user/teacher-user/index'),
+        meta: { title: '教师', icon: 'user' }
       }
     ]
   },

@@ -48,9 +48,10 @@ const user = {
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
-          const data = response.data
-          commit('SET_ROLES', data.roles)
-          commit('SET_NAME', data.name)
+          const data = response.data.data
+          // commit('SET_ROLES', data.roles)
+          commit('SET_ROLES', []) // 尚未添加路由规则
+          commit('SET_NAME', data.username)
           commit('SET_AVATAR', data.avatar)
           commit('SET_LEVEL', data.level)
           resolve(response)

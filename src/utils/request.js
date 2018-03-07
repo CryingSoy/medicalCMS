@@ -27,8 +27,16 @@ service.interceptors.response.use(
   /**
   * code为非20000是抛错 可结合自己业务进行修改
   */
-    // const res = response.data
-    // console.log(res)
+    const res = response.data
+    if (res.code === -1 || res.code === -2 || res.code === -3) {
+      if (res.msg !== 'token不存在') {
+        Message({
+          message: res.msg,
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
+    }
     return response
     // if (res.code !== 20000) {
     //   Message({

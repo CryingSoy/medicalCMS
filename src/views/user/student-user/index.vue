@@ -6,7 +6,7 @@
       <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" :placeholder="'姓名'" v-model="listQuery.author">
       </el-input>
       <el-select clearable style="width: 90px" v-model="listQuery.status" class="filter-item" :placeholder="'状态'">
-        <el-option v-for="item in statusList" :key="item" :label="item" :value="item">
+        <el-option v-for="item in statusList" :key="item" :label="labelCreator(item)" :value="item">
       </el-option>
       </el-select>
       <!-- <el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.type" :placeholder="$t('table.type')">
@@ -34,26 +34,21 @@
           {{scope.row.username}}
         </template>
       </el-table-column>
-      <el-table-column label="姓名" width="150" align="center">
+      <el-table-column label="姓名" width="70" align="center">
         <template slot-scope="scope">
-          <span>{{scope.row.author}}</span>
+          <span>{{scope.row.name}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="最后一次登录时间" >
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
-          <span>{{scope.row.lasttime}}</span>
+          <span>{{scope.row.updatetime}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="添加用户时间" >
+      <el-table-column align="center" label="注册时间" >
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
           <span>{{scope.row.firsttime}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="状态" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{scope.row.status}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作" >
@@ -72,7 +67,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
+import { getList } from '@/api/user'
 import waves from '@/directive/waves' // 水波纹指令
 
 export default {
@@ -107,6 +102,14 @@ export default {
     this.fetchData()
   },
   methods: {
+    labelCreator(label) {
+      switch (label) {
+        case 1: return '坐诊中'
+        case 2: return '休息中'
+        case 3: return '下班了'
+        case 12: return '坐诊中和休息中'
+      }
+    },
     handleCreate() {
       console.log('1')
     },
@@ -133,29 +136,29 @@ export default {
     },
     fetchData() {
       this.listLoading = true
-      getList().then(response => {
-        this.list = response.data.items
+      getList('student').then(response => {
+        this.list = response.data.data
         this.listLoading = false
         this.TimeCalculator(this.list)
       })
     },
     TimeCalculator(list) {
       list.map(item => {
-        if (item.hasOwnProperty('lasttime')) {
-          const time = new Date(item.lasttime)
+        if (item.hasOwnProperty('updatetime')) {
+          const time = new Date(item.updatetime)
           const year = time.getFullYear()
-          const mouth = time.getMonth()
-          const day = time.getDay()
+          const mouth = time.getMonth() + 1
+          const day = time.getDate()
           const hour = time.getHours()
           const minutes = time.getMinutes()
           const second = time.getSeconds()
-          item.lasttime = `${year}年${mouth}月${day}日${hour}时${minutes}分${second}秒`
+          item.updatetime = `${year}年${mouth}月${day}日${hour}时${minutes}分${second}秒`
         }
         if (item.hasOwnProperty('firsttime')) {
           const time = new Date(item.firsttime)
           const year = time.getFullYear()
-          const mouth = time.getMonth()
-          const day = time.getDay()
+          const mouth = time.getMonth() + 1
+          const day = time.getDate()
           const hour = time.getHours()
           const minutes = time.getMinutes()
           const second = time.getSeconds()

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 
 const notNeedFilterMap = [
   '/user/login',
-  '/user/getUserInfo'
+  '/user/getUserInfo',
 ]
 
 const authMap = {
@@ -12,7 +12,7 @@ const authMap = {
     '/user/addAdminOrDoctor',
     '/user/removeUser',
     '/user/getUserByType',
-    '/user/resetPassword'
+    '/user/resetPassword',
   ],
   '校医': []
 }
