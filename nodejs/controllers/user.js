@@ -312,4 +312,5 @@ router.post('/resetPassword', (req, res) => {
     }
   })()
 })
+
 module.exports = router
