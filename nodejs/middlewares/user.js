@@ -3,21 +3,6 @@ const user = require('../models/user')
 const auth = require('../models/auth')
 const jwt = require('jsonwebtoken')
 
-const notNeedFilterMap = [
-  '/user/login',
-  '/user/getUserInfo',
-]
-
-const authMap = {
-  '超级管理员': [
-    '/user/addAdminOrDoctor',
-    '/user/removeUser',
-    '/user/getUserByType',
-    '/user/resetPassword',
-  ],
-  '校医': []
-}
-
 module.exports = (req, res, next) => {
   (async function() {
     const authMap = await auth.getAuthTable()

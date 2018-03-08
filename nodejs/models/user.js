@@ -25,6 +25,31 @@ exports.queryUsername = username => {
   })
 }
 
+/**
+ * 查询用户名是否存在(userInfo表)
+ * @param  {String}  - username
+ * @return {Boolean} - false已存在，true不存在
+ */
+exports.queryUsernameInUserinfo = username => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `select * from userInfo where username = '${username}'`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        if (rows.length > 0) {
+          resolve(false)
+        } else {
+          resolve(true)
+        }
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
+
 exports.getPassword = username => {
   return new Promise((resolve, reject) => {
     try {
@@ -165,8 +190,13 @@ exports.getUser = type => {
 
 exports.resetPassword = data => {
   return new Promise((resolve, reject) => {
+    let sqlcommand = ''
+    if (!data.type) {
+      sqlcommand = `update adminUser set password = '${data.password}' where username = '${data.username}'`
+    } else if (data.type === 'userInfo') {
+      sqlcommand = `update userInfo set password = '${data.password}' where username = '${data.username}'`
+    }
     try {
-      const sqlcommand = `update adminUser set password = '${data.password}' where username = '${data.username}'`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
           reject(error)

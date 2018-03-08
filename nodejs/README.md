@@ -104,6 +104,7 @@
 > | :--- | :--- | :--- | :--- |
 > | username | 是 | string | 用户名 |
 > | password | 是 | string | 密码 |
+> | type | 否 | string | 不传：后台用户重置密码；传 'userInfo'：校医、学生、教师重置密码 |
 
 ---
 

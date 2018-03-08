@@ -266,6 +266,12 @@ router.get('/getUserByType', (req, res) => {
 // 后台用户重置密码
 router.post('/resetPassword', (req, res) => {
   const data = req.body
+  if (!(!data.type || data.type === 'userInfo')) {
+    res.json({
+      code: -1,
+      msg: 'type类型错误'
+    })
+  }
   if (!data.username) {
     res.json({
       code: -1,
@@ -287,30 +293,57 @@ router.post('/resetPassword', (req, res) => {
     })
     return
   }
-  (async function() {
-    try {
-      const flag = await user.queryUsername(data.username)
-      if (!flag) {
-        data.password = utils.changeWithMD5(data.password)
-        await user.resetPassword(data)
-        res.json({
-          code: 1,
-          msg: `${data.username}密码修改成功`
-        })
-      } else {
+  if (!data.type) {
+    (async function() {
+      try {
+        const flag = await user.queryUsername(data.username)
+        if (!flag) {
+          data.password = utils.changeWithMD5(data.password)
+          await user.resetPassword(data)
+          res.json({
+            code: 1,
+            msg: `${data.username}密码修改成功`
+          })
+        } else {
+          res.json({
+            code: -1,
+            msg: '用户名不存在'
+          })
+        }
+      } catch (error) {
+        console.log(error)
         res.json({
           code: -1,
-          msg: '用户名不存在'
+          msg: '服务器错误'
         })
       }
-    } catch (error) {
-      console.log(error)
-      res.json({
-        code: -1,
-        msg: '服务器错误'
-      })
-    }
-  })()
+    })()
+  } else if (data.type === 'userInfo') {
+    (async function() {
+      try {
+        const flag = await user.queryUsernameInUserinfo(data.username)
+        if (!flag) {
+          data.password = utils.changeWithMD5(utils.changeWithMD5(data.password).substring(0, 10))
+          await user.resetPassword(data)
+          res.json({
+            code: 1,
+            msg: `${data.username}密码修改成功`
+          })
+        } else {
+          res.json({
+            code: -1,
+            msg: '用户名不存在'
+          })
+        }
+      } catch (error) {
+        console.log(error)
+        res.json({
+          code: -1,
+          msg: '服务器错误'
+        })
+      }
+    })()
+  }
 })
 
 module.exports = router
