@@ -53,7 +53,7 @@
       </el-table-column>
       <el-table-column align="center" label="操作" >
         <template slot-scope="scope">
-          <el-button type="primary" v-waves size="small">重置密码</el-button>
+          <el-button type="primary" v-waves size="small" @click="resetClick(scope.row.username)">重置密码</el-button>
           <el-button type="danger" v-waves size="small">删除</el-button>
         </template>
       </el-table-column>
@@ -63,12 +63,33 @@
       <el-pagination background :current-page="1" :page-sizes="[10,20,30,50]" layout="total, sizes, prev, pager, next, jumper" :total="2">
       </el-pagination>
     </div> -->
+
+    <el-dialog width="500px" title="重置密码" :visible.sync="dialogFormVisible">
+      <el-form :model="resetPasswordForm">
+        <el-form-item label="用户名：" style="padding-left: 30px;">
+          <span style="font-size: 16px">{{ this.resetPasswordForm.username }}</span>
+        </el-form-item>
+        <md-input @blur="passwordValidator()" v-model="resetPasswordForm.password" style="width: 400px; margin-left: 30px" placeholder="输入密码">
+          <span style="font-size: 14px">新密码</span>
+        </md-input>
+        <el-form-item style="padding:0 0 0 30px;">
+          <transition name="el-zoom-in-top">
+          <span v-if="passwordTipsVis" style="position: absolute;font-size: 12px; color: rgba(255, 66, 55, .85);">Tips: {{ passwordTips }}</span>
+          </transition>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" style="margin-bottom:30px" class="dialog-footer" align="center">
+        <el-button style="margin-right:30px" @click="dialogFormVisible = false">取 消</el-button>
+        <el-button style="margin-left:30px" type="primary" @click="confirmReset()">确认重置</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getList } from '@/api/user'
+import { getList, resetPassword } from '@/api/user'
 import waves from '@/directive/waves' // 水波纹指令
+import MdInput from '@/components/MDinput'
 
 export default {
   directives: {
@@ -77,6 +98,13 @@ export default {
   data() {
     return {
       list: null,
+      resetPasswordForm: {
+        username: '',
+        password: ''
+      },
+      passwordTips: '',
+      passwordTipsVis: false,
+      dialogFormVisible: false,
       listLoading: true,
       statusList: [1, 2, 3, 12],
       listQuery: {
@@ -87,6 +115,9 @@ export default {
         limit: 20
       }
     }
+  },
+  components: {
+    MdInput
   },
   filters: {
     statusFilter(status) {
@@ -102,6 +133,46 @@ export default {
     this.fetchData()
   },
   methods: {
+    confirmReset() {
+      if (this.passwordTipsVis || this.resetPasswordForm.password === '') {
+        this.$message({
+          message: '请输入正确格式的密码',
+          type: 'warning'
+        })
+      } else {
+        resetPassword(this.resetPasswordForm.username, this.resetPasswordForm.password, 'userInfo')
+          .then(res => {
+            this.$message({
+              type: 'success',
+              message: res.data.msg
+            })
+            this.resetPasswordDiglog()
+            this.dialogFormVisible = false
+            this.fetchData()
+          })
+      }
+    },
+    resetPasswordDiglog() {
+      this.resetPasswordForm.password = ''
+      this.passwordTipsVis = false
+    },
+    passwordValidator() {
+      if (this.resetPasswordForm.password.length < 6 || this.resetPasswordForm.password.length > 16) {
+        this.passwordTipsVis = true
+        this.passwordTips = '密码长度必须是6到16'
+      } else if (this.resetPasswordForm.password.indexOf(' ') >= 0) {
+        this.passwordTipsVis = true
+        this.passwordTips = '密码不能有空格'
+      } else {
+        this.passwordTipsVis = false
+      }
+    },
+    resetClick(item) {
+      this.dialogFormVisible = true
+      this.resetPasswordForm.password = ''
+      this.passwordTipsVis = false
+      this.resetPasswordForm.username = item
+    },
     labelCreator(label) {
       switch (label) {
         case 1: return '坐诊中'

@@ -41,7 +41,7 @@ export const constantRouterMap = [
   {
     path: '/user',
     component: Layout,
-    redirect: '/user/table',
+    redirect: '/user/admininfo',
     name: 'user',
     meta: { title: '用户管理', icon: 'example' },
     children: [
@@ -61,7 +61,7 @@ export const constantRouterMap = [
         path: 'studentinfo',
         name: 'studentinfo',
         component: () => import('@/views/user/student-user/index'),
-        meta: { title: '学生', icon: 'tree' }
+        meta: { title: '学生', icon: 'peoples' }
       },
       {
         path: 'teacherinfo',

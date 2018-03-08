@@ -78,7 +78,9 @@
           <span style="font-size: 14px">新密码</span>
         </md-input>
         <el-form-item style="padding:0 0 0 30px;">
-          <span v-if="passwordTipsVis" style="position: absolute;font-size: 14px; color: red;">Tips: {{ passwordTips }}</span>
+          <transition name="el-zoom-in-top">
+          <span v-if="passwordTipsVis" style="position: absolute;font-size: 12px; color: rgba(255, 66, 55, .85);">Tips: {{ passwordTips }}</span>
+          </transition>
         </el-form-item>
       </el-form>
       <div slot="footer" style="margin-bottom:30px" class="dialog-footer" align="center">
@@ -143,8 +145,21 @@ export default {
           type: 'warning'
         })
       } else {
-        resetPassword(this.resetPasswordForm.username, this.resetPasswordForm.password)
+        resetPassword(this.resetPasswordForm.username, this.resetPasswordForm.password, 'userInfo')
+          .then(res => {
+            this.$message({
+              type: 'success',
+              message: res.data.msg
+            })
+            this.resetPasswordDiglog()
+            this.dialogFormVisible = false
+            this.fetchData()
+          })
       }
+    },
+    resetPasswordDiglog() {
+      this.resetPasswordForm.password = ''
+      this.passwordTipsVis = false
     },
     passwordValidator() {
       if (this.resetPasswordForm.password.length < 6 || this.resetPasswordForm.password.length > 16) {

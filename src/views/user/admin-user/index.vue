@@ -65,7 +65,9 @@
           <span style="font-size: 14px">新密码</span>
         </md-input>
         <el-form-item style="padding:0 0 0 30px;">
-          <span v-if="passwordTipsVis" style="position: absolute;font-size: 14px; color: red;">Tips: {{ passwordTips }}</span>
+          <transition name="el-zoom-in-top">
+          <span v-if="passwordTipsVis" style="position: absolute;font-size: 12px; color: rgba(255, 66, 55, .85);">Tips: {{ passwordTips }}</span>
+          </transition>
         </el-form-item>
       </el-form>
       <div slot="footer" style="margin-bottom:30px" class="dialog-footer" align="center">
@@ -116,6 +118,8 @@ export default {
         callback(new Error('请输入用户名'))
       } else if (value.indexOf(' ') >= 0) {
         callback(new Error('用户名不能包含空格'))
+      } else if (value.length < 2 || value.length > 16) {
+        callback(new Error('用户名长度必须是2到16'))
       } else {
         callback()
       }
@@ -213,6 +217,7 @@ export default {
               type: 'success',
               message: `删除用户'${username}'成功!`
             })
+            this.fetchData()
           })
       }).catch(() => {
         this.$message({
@@ -236,6 +241,7 @@ export default {
             })
             this.resetPasswordDiglog()
             this.dialogFormVisible = false
+            this.fetchData()
           })
       }
     },

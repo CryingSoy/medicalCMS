@@ -8,8 +8,8 @@ export function getList(type) {
   })
 }
 
-export function resetPassword(username, password) {
-  const data = { username, password }
+export function resetPassword(username, password, type) {
+  const data = { username, password, type }
   return request({
     url: '/user/resetPassword',
     method: 'post',
