@@ -19,7 +19,7 @@ Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
 
-new Vue({
+window.vm = new Vue({
   el: '#app',
   router,
   store,

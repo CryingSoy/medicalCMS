@@ -39,6 +39,32 @@ export const constantRouterMap = [
   },
 
   {
+    path: '/auth',
+    component: Layout,
+    redirect: '/admin/auth',
+    name: 'auth',
+    // hidden: true,
+    children: [{
+      path: 'admin/auth',
+      component: () => import('@/views/auth/index'),
+      meta: { title: '权限管理', icon: 'component' }
+    }]
+  },
+
+  {
+    path: '/test',
+    component: Layout,
+    redirect: '/admin/test',
+    name: 'test',
+    // hidden: true,
+    children: [{
+      path: 'admin/test',
+      component: () => import('@/views/test/index'),
+      meta: { title: '测试', icon: '404' }
+    }]
+  },
+
+  {
     path: '/user',
     component: Layout,
     redirect: '/user/admininfo',
@@ -80,7 +106,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Form',
         component: () => import('@/views/form/index'),
-        meta: { title: '药品录入', icon: 'form' }
+        meta: { title: '药品管理', icon: 'form' }
       }
     ]
   },
