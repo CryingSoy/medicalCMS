@@ -1,3 +1,58 @@
+## 药品录入
+
+---
+
+##### 请求说明
+
+> 
+
+---
+
+###### 接口地址
+
+> admin/drug/saveDrugsInfo
+
+###### 请求方法
+
+> POST
+
+###### 请求参数
+
+> | 字段 | 是否必传 | 类型 | 说明 |
+> | :--- | :--- | :--- | :--- |
+> | mBarcode | 是 | string | 条形码 |
+> | mType | 是 | string | 药品类型 |
+> | mClassify | 是 | string | 归属分类 |
+> | mUnit | 是 | string | 药品规格 |
+> | mUseWay | 是 | string | 用药方式 |
+> | mTreatment | 是 | string | 用药疗程 |
+> | mBatch | 是 | string | 批号 |
+> | mInPrice | 是 | string | 进货价 |
+> | mOutPrice | 是 | string | 售价 |
+> | mStock | 是 | string | 库存量 |
+> | type | 是 | string | in/out 传in |
+> | mProduceTime | 是 | string | 生产日期 |
+> | mOverdueTime | 是 | string | 最后有效日期 |
+> | inputer | 是 | string | 存入者 |
+> | factory | 否 | string | 药品厂商 |
+> | mRemark | 否 | string | 备注 |
+
+---
+
+##### 返回数据说明
+
+> 以json格式返回数据
+
+---
+
+###### 字段说明
+
+> | 字段 | 类型 | 说明 |
+> | :--- | :--- | :--- |
+> | code | Int | 状态码 |
+> | msg | String | 提示信息 |
+>
+
 ## 后台获取各类型权限数组
 
 ---

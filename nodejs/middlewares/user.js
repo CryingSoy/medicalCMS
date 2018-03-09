@@ -15,6 +15,7 @@ module.exports = (req, res, next) => {
       '超级管理员': adminMap,
       '校医': doctorMap
     }
+    req.path = req.path.replace('/admin', '')
     if (noNeedFilterMap.includes(req.path)) {
       next()
       return
@@ -52,7 +53,6 @@ module.exports = (req, res, next) => {
               msg: 'token查询失败'
             })
           } else {
-            console.log(data)
             if (_authMap[data.level].includes(req.path)) {
               next()
             } else {
