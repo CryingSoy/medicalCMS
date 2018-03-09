@@ -22,12 +22,11 @@ export default {
   },
   mounted() {
     var rfidreader = window.rfidreader
-    var vm = window.vm
-    rfidreader.onResult(function(resultdata) {
+    rfidreader.onResult(resultdata => {
       switch (resultdata.FunctionID) {
         case 0:
           if (resultdata.Result > 0) {
-            vm.$children[0].$children[0].$children[2].$children[0].$children[6].$refs.input.value = resultdata.strData
+            this.cardid = resultdata.strData
           }
           break
       }

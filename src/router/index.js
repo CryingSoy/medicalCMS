@@ -41,11 +41,9 @@ export const constantRouterMap = [
   {
     path: '/auth',
     component: Layout,
-    redirect: '/admin/auth',
-    name: 'auth',
-    // hidden: true,
     children: [{
-      path: 'admin/auth',
+      path: 'index',
+      name: 'auth',
       component: () => import('@/views/auth/index'),
       meta: { title: '权限管理', icon: 'component' }
     }]
@@ -54,11 +52,9 @@ export const constantRouterMap = [
   {
     path: '/test',
     component: Layout,
-    redirect: '/admin/test',
-    name: 'test',
-    // hidden: true,
     children: [{
-      path: 'admin/test',
+      path: 'index',
+      name: 'test',
       component: () => import('@/views/test/index'),
       meta: { title: '测试', icon: '404' }
     }]
