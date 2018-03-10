@@ -3,7 +3,7 @@ const mysql = require('../mysql')
 exports.saveDurgsInfo = data => {
   return new Promise((resolve, reject) => {
     try {
-      const sqlcommand = `insert into drugsInfo(mBarcode,mType,mClassify,factory,mUnit,mUseWay,mTreatment,mRemark,mBatch,mStock,mInPrice,mOutPrice,mProduceTime,mOverdueTime,inputer) value('${data.mBarcode}','${data.mType}','${data.mClassify}','${data.factory || ''}','${data.mUnit}','${data.mUseWay}','${data.mTreatment}','${data.mRemark || ''}','${data.mBatch}','${data.mStock}','${data.mInPrice}','${data.mOutPrice}','${data.mProduceTime}','${data.mOverdueTime}','${data.inputer}')`
+      const sqlcommand = `insert into drugsInfo(mBarcode,mType,mClassify,factory,mUnit,mUseWay,mTreatment,mRemark,mBatch,mStock,mInPrice,mOutPrice,mProduceTime,mOverdueTime,inputer,mInTime,mName) value('${data.mBarcode}','${data.mType}','${data.mClassify}','${data.factory || ''}','${data.mUnit}','${data.mUseWay}','${data.mTreatment}','${data.mRemark || ''}','${data.mBatch}','${data.mStock}','${data.mInPrice}','${data.mOutPrice}','${data.mProduceTime}','${data.mOverdueTime}','${data.inputer}','${new Date().getTime()}','${data.mName}')`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
           reject(error)
@@ -66,6 +66,22 @@ exports.getDrugsInfoByParams = params => {
       })
     } catch (error) {
       console.error(error)
+    }
+  })
+}
+
+exports.updateDrugInfo = data => {
+  const sqlcommand = `update drugsInfo set mType = '${data.mType}', mClassify = '${data.mClassify}', factory = '${data.factory || ''}', mUnit = '${data.mUnit}', mUseWay = '${data.mUseWay}', mTreatment = '${data.mTreatment}', mRemark = '${data.mRemark || ''}', mBatch = '${data.mBatch}', mInPrice = '${data.mInPrice}', mOutPrice = '${data.mOutPrice}', mProduceTime = '${data.mProduceTime}', mOverdueTime = '${data.mOverdueTime}', inputer = '${data.inputer}', mName = '${data.mName}' where id = ${data.id}`
+  return new Promise((resolve, reject) => {
+    try {
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve()
+      })
+    } catch (error) {
+      console.log(error)
     }
   })
 }
