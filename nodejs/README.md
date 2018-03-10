@@ -39,7 +39,9 @@
 > | msg | String | 提示信息 |
 >
 
-## 获取其他储存（例如mClassify）
+
+
+## 更改其他储存（例如mClassify）
 
 ---
 
