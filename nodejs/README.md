@@ -20,7 +20,20 @@
 
 > | 字段 | 是否必传 | 类型 | 说明 |
 > | :--- | :--- | :--- | :--- |
-> | params | 否 | string | 不传：获取全部数据，传数组字符串：比如要查id等于7同时barcode为1111的就传：[{"name":"id","word":"7"},{"name":"mBarcode","word":"1111"}]，详细字段看药品录入的传参 |
+> | id | 是 | string | id |
+> | mType | 是 | string | 药品类型 |
+> | mClassify | 是 | string | 归属分类 |
+> | mUnit | 是 | string | 药品规格 |
+> | mUseWay | 是 | string | 用药方式 |
+> | mTreatment | 是 | string | 用药疗程 |
+> | mBatch | 是 | string | 批号 |
+> | mInPrice | 是 | string | 进货价 |
+> | mOutPrice | 是 | string | 售价 |
+> | mProduceTime | 是 | string | 生产日期 |
+> | mOverdueTime | 是 | string | 最后有效日期 |
+> | inputer | 是 | string | 存入者 |
+> | factory | 否 | string | 药品厂商 |
+> | mRemark | 否 | string | 备注 |
 
 ---
 
@@ -62,20 +75,7 @@
 
 > | 字段 | 是否必传 | 类型 | 说明 |
 > | :--- | :--- | :--- | :--- |
-> | id | 是 | string | id |
-> | mType | 是 | string | 药品类型 |
-> | mClassify | 是 | string | 归属分类 |
-> | mUnit | 是 | string | 药品规格 |
-> | mUseWay | 是 | string | 用药方式 |
-> | mTreatment | 是 | string | 用药疗程 |
-> | mBatch | 是 | string | 批号 |
-> | mInPrice | 是 | string | 进货价 |
-> | mOutPrice | 是 | string | 售价 |
-> | mProduceTime | 是 | string | 生产日期 |
-> | mOverdueTime | 是 | string | 最后有效日期 |
-> | inputer | 是 | string | 存入者 |
-> | factory | 否 | string | 药品厂商 |
-> | mRemark | 否 | string | 备注 |
+> | params | 否 | string | 不传：获取全部数据，传数组字符串：比如要查id等于7同时barcode为1111的就传：[{"name":"id","word":"7"},{"name":"mBarcode","word":"1111"}]，详细字段看药品录入的传参 |
 
 ---
 
