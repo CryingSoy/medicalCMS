@@ -56,7 +56,7 @@ exports.getDrugsInfoByParams = (params, data) => {
       sqlcommand += `and ${e.name} = '${e.word}'`
     })
   }
-  sqlcommand += `limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
+  sqlcommand += ` limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
   return new Promise((resolve, reject) => {
     try {
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
