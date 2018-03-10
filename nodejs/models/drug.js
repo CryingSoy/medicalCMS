@@ -3,7 +3,7 @@ const mysql = require('../mysql')
 exports.saveDurgsInfo = data => {
   return new Promise((resolve, reject) => {
     try {
-      const sqlcommand = `insert into drugsInfo(mBarcode,mType,mClassify,factory,mUnit,mUseWay,mTreatment,mRemark,mBatch,mStock,mInPrice,mOutPrice,mProduceTime,mOverdueTime,inputer,mInTime,mName) value('${data.mBarcode}','${data.mType}','${data.mClassify}','${data.factory || ''}','${data.mUnit}','${data.mUseWay}','${data.mTreatment}','${data.mRemark || ''}','${data.mBatch}','${data.mStock}','${data.mInPrice}','${data.mOutPrice}','${data.mProduceTime}','${data.mOverdueTime}','${data.inputer}','${new Date().getTime()}','${data.mName}')`
+      const sqlcommand = `insert into drugsInfo(mBarcode,mType,mClassify,factory,mUnit,mUseWay,mTreatment,mRemark,mBatch,mStock,mInPrice,mOutPrice,mProduceTime,mOverdueTime,inputer,mInTime,mName) value('${parseInt(data.mBarcode)}','${data.mType}','${data.mClassify}','${data.factory || ''}','${data.mUnit}','${data.mUseWay}','${data.mTreatment}','${data.mRemark || ''}','${data.mBatch}','${parseInt(data.mStock)}','${data.mInPrice}','${data.mOutPrice}','${data.mProduceTime}','${data.mOverdueTime}','${data.inputer}','${new Date().getTime()}','${data.mName}')`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
           reject(error)
@@ -19,7 +19,7 @@ exports.saveDurgsInfo = data => {
 exports.saveDurgsFlow = data => {
   return new Promise((resolve, reject) => {
     try {
-      const sqlcommand = `insert into drugsFlow(mBarcode,inputer,user,useType,useNum,useTotal,mark) value('${data.mBarcode}','${data.inputer || ''}','${data.user || ''}','${data.type}','${data.mStock}','${parseFloat(data.mStock) * parseFloat(data.mInPrice)}','${data.mark || ''}')`
+      const sqlcommand = `insert into drugsFlow(mBarcode,inputer,user,useType,useNum,useTotal,mark,mName) value('${data.mBarcode}','${data.inputer || ''}','${data.user || ''}','${data.type}','${parseInt(data.mStock)}','${parseFloat(data.mStock) * parseFloat(data.mInPrice)}','${data.mark || ''}','${data.mName}')`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
           reject(error)
@@ -82,6 +82,38 @@ exports.updateDrugInfo = data => {
       })
     } catch (error) {
       console.log(error)
+    }
+  })
+}
+
+exports.queryDrugStock = data => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `select mStock from drugsInfo where id = '${data.id}'`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(rows[0].mStock)
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
+
+exports.updateStock = data => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `update drugsInfo set mStock = '${data.num}' where id = '${data.id}'`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve()
+      })
+    } catch (error) {
+      console.error(error)
     }
   })
 }

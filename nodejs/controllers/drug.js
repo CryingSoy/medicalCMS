@@ -167,7 +167,7 @@ router.get('/getDrugsInfo', (req, res) => {
   }
 })
 
-router.post('/updateDrugInfo', (req, res) => {
+router.post('/updateDrugsInfo', (req, res) => {
   const data = req.body
   if (!data.mName) {
     res.json({
@@ -274,6 +274,78 @@ router.post('/updateDrugInfo', (req, res) => {
         msg: '服务器错误'
       })
     }
+  })()
+})
+
+router.post('/reduceDrugs', (req, res) => {
+  const data = req.body
+  if (!data.id) {
+    res.json({
+      code: -1,
+      msg: 'id不能为空'
+    })
+    return
+  }
+  if (!data.mStock) {
+    res.json({
+      code: -1,
+      msg: '减少数目不能为空'
+    })
+    return
+  }
+  if (!data.type) {
+    res.json({
+      code: -1,
+      msg: 'type不能为空，传out'
+    })
+    return
+  }
+  if (!data.mark) {
+    res.json({
+      code: -1,
+      msg: '备注不能为空'
+    })
+  }
+  if (!data.mInPrice) {
+    res.json({
+      code: -1,
+      msg: '单价不能为空'
+    })
+  }
+  if (!data.inputer) {
+    res.json({
+      code: -1,
+      msg: '操作者不能为空'
+    })
+  }
+  if (!data.mBarcode) {
+    res.json({
+      code: -1,
+      msg: '条形码不能为空'
+    })
+  }
+  if (!data.mName) {
+    res.json({
+      code: -1,
+      msg: 'mName不能为空'
+    })
+  }
+  (async function() {
+    const num = parseInt(await drug.queryDrugStock(data))
+    const reduceNum = parseInt(data.mStock)
+    if (num < reduceNum) {
+      res.json({
+        code: -1,
+        msg: '减少数量大于库存数量'
+      })
+      return
+    }
+    await drug.updateStock({ num: num - reduceNum, id: data.id })
+    await drug.saveDurgsFlow(data)
+    res.json({
+      code: 1,
+      msg: `商品减少成功。库存为${num - reduceNum}`
+    })
   })()
 })
 

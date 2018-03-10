@@ -1,3 +1,53 @@
+## 药品出库
+
+---
+
+##### 请求说明
+
+> 
+
+---
+
+###### 接口地址
+
+> admin/drug/reduceDrugs
+
+###### 请求方法
+
+> POST
+
+###### 请求参数
+
+> | 字段 | 是否必传 | 类型 | 说明 |
+> | :--- | :--- | :--- | :--- |
+> | id | 是 | string | id |
+> | mInPrice | 是 | string | 单价 |
+> | inputer | 是 | string | 存入者 |
+> | mBarcode | 是 | string | 条形码 |
+> | mName | 是 | string | 药物名称 |
+> | mark | 是 | string | 备注 |
+> | type | 是 | string | in/out 传out |
+> | mStock | 是 | string | 减少数目 |
+> | user | 否 | string | 使用者 |
+
+---
+
+##### 返回数据说明
+
+> 以json格式返回数据
+
+---
+
+###### 字段说明
+
+> | 字段 | 类型 | 说明 |
+> | :--- | :--- | :--- |
+> | code | Int | 状态码 |
+> | data | Object | 数据 |
+> | msg | String | 提示信息 |
+>
+
+
 ## 药品更新
 
 ---
@@ -127,7 +177,7 @@
 > | mBatch | 是 | string | 批号 |
 > | mInPrice | 是 | string | 进货价 |
 > | mOutPrice | 是 | string | 售价 |
-> | mStock | 是 | string | 库存量 |
+> | mStock | 是 | Number | 库存量 |
 > | type | 是 | string | in/out 传in |
 > | mProduceTime | 是 | string | 生产日期 |
 > | mOverdueTime | 是 | string | 最后有效日期 |
