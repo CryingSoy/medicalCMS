@@ -35,7 +35,7 @@ exports.saveDurgsFlow = data => {
 exports.getDrugsInfoAll = data => {
   return new Promise((resolve, reject) => {
     try {
-      const sqlcommand = `select * from drugsInfo`
+      const sqlcommand = `select * from drugsInfo limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
           reject(error)
@@ -48,7 +48,7 @@ exports.getDrugsInfoAll = data => {
   })
 }
 
-exports.getDrugsInfoByParams = params => {
+exports.getDrugsInfoByParams = (params, data) => {
   let sqlcommand = `select * from drugsInfo where ${params[0].name} = '${params[0].word}'`
   params.splice(0, 1)
   if (params.length > 0) {
@@ -56,6 +56,7 @@ exports.getDrugsInfoByParams = params => {
       sqlcommand += `and ${e.name} = '${e.word}'`
     })
   }
+  sqlcommand += `limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
   return new Promise((resolve, reject) => {
     try {
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
@@ -111,6 +112,22 @@ exports.updateStock = data => {
           reject(error)
         }
         resolve()
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
+
+exports.getOverdueByDay = deadline => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `select * from drugsInfo where mOverdueTime < ${deadline}`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(rows)
       })
     } catch (error) {
       console.error(error)

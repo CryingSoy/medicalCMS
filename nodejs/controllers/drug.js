@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const drug = require('../models/drug')
+const utils = require('../utils')
 
 router.post('/saveDrugsInfo', (req, res) => {
   const data = req.body
@@ -132,7 +133,7 @@ router.get('/getDrugsInfo', (req, res) => {
   if (!data.params) {
     (async function() {
       try {
-        const result = await drug.getDrugsInfoAll()
+        const result = await drug.getDrugsInfoAll(data)
         res.json({
           code: 1,
           msg: `查询成功，共查到${result.length}条数据`,
@@ -149,7 +150,7 @@ router.get('/getDrugsInfo', (req, res) => {
   } else {
     (async function() {
       try {
-        const result = await drug.getDrugsInfoByParams(JSON.parse(data.params))
+        const result = await drug.getDrugsInfoByParams(JSON.parse(data.params), data)
         res.json({
           code: 1,
           msg: `查询成功，共查到${result.length}条数据`,
@@ -347,6 +348,59 @@ router.post('/reduceDrugs', (req, res) => {
       msg: `商品减少成功。库存为${num - reduceNum}`
     })
   })()
+})
+
+router.get('/getOverdueByDay', (req, res) => {
+  const deadline = parseInt(req.query.day) || 5
+  const stamp = utils.getDay(deadline).getTime()
+  !(async function() {
+    try {
+      const result = await drug.getOverdueByDay(stamp)
+      res.json({
+        code: 1,
+        msg: `查询成功，共${result.length}条数据`,
+        data: result
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '服务器错误'
+      })
+    }
+  })()
+})
+
+router.get('./getDrugByTime', (req, res) => {
+  const data = req.query
+  if (!data.type) {
+    res.json({
+      code: -1,
+      msg: 'type不能为空'
+    })
+    return
+  }
+  if (!data.startTime) {
+    res.json({
+      code: -1,
+      msg: 'startTime不能为空'
+    })
+    return
+  }
+  if (!data.endTime) {
+    res.json({
+      code: -1,
+      msg: 'endTime不能为空'
+    })
+    return
+  }
+  if (data.startTime >= data.endTime) {
+    res.json({
+      code: -1,
+      msg: 'startTime > endTime ？？？'
+    })
+    return
+  }
 })
 
 module.exports = router
