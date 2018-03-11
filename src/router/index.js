@@ -95,14 +95,21 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/form',
+    path: '/drugs',
     component: Layout,
+    meta: { title: '药品管理', icon: 'form' },
     children: [
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: '药品管理', icon: 'form' }
+        path: 'input',
+        name: 'drugsInput',
+        component: () => import('@/views/drugs/drugsInput/index'),
+        meta: { title: '药品入库', icon: 'shoppingCard' }
+      },
+      {
+        path: 'info',
+        name: 'drugsInfo',
+        component: () => import('@/views/drugs/drugsInfo/index'),
+        meta: { title: '药品查询', icon: 'tree' }
       }
     ]
   },
