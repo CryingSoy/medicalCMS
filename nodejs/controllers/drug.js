@@ -480,4 +480,72 @@ router.get('/getDrugsFlow', (req, res) => {
   }
 })
 
+router.get('/getDrugsFlowByTime', (req, res) => {
+  const data = req.query
+  if (!data.type) {
+    res.json({
+      code: -1,
+      msg: 'type不能为空'
+    })
+    return
+  }
+  if (!data.startTime) {
+    res.json({
+      code: -1,
+      msg: 'startTime不能为空'
+    })
+    return
+  }
+  if (!data.endTime) {
+    res.json({
+      code: -1,
+      msg: 'endTime不能为空'
+    })
+    return
+  }
+  if (isNaN(data.endTime)) {
+    res.json({
+      code: -1,
+      msg: '请输入数字'
+    })
+    return
+  }
+  if (isNaN(data.startTime)) {
+    res.json({
+      code: -1,
+      msg: '请输入数字'
+    })
+    return
+  }
+  if (!(data.type === 'useTime')) {
+    res.json({
+      code: -1,
+      msg: 'type类型错误'
+    })
+  }
+  if (data.startTime >= data.endTime) {
+    res.json({
+      code: -1,
+      msg: 'startTime > endTime ？？？'
+    })
+    return
+  }
+  (async function() {
+    try {
+      const result = await drug.getDrugFlowByTime(data)
+      res.json({
+        code: 1,
+        msg: `查询成功，共查到${result.length}条数据`,
+        data: result
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '服务器错误'
+      })
+    }
+  })()
+})
+
 module.exports = router

@@ -19,7 +19,7 @@ exports.saveDurgsInfo = data => {
 exports.saveDurgsFlow = data => {
   return new Promise((resolve, reject) => {
     try {
-      const sqlcommand = `insert into drugsFlow(mBarcode,inputer,user,useType,useNum,useTotal,mark,mName) value('${data.mBarcode}','${data.inputer || ''}','${data.user || ''}','${data.type}','${parseInt(data.mStock)}','${parseFloat(data.mStock) * parseFloat(data.mInPrice)}','${data.mark || ''}','${data.mName}')`
+      const sqlcommand = `insert into drugsFlow(mBarcode,inputer,user,useType,useNum,useTotal,mark,mName,useTime) value('${data.mBarcode}','${data.inputer || ''}','${data.user || ''}','${data.type}','${parseInt(data.mStock)}','${parseFloat(data.mStock) * parseFloat(data.mInPrice)}','${data.mark || ''}','${data.mName}','${new Date().getTime()}')`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
           reject(error)
@@ -178,6 +178,22 @@ exports.getDrugsFlowByParams = (params, data) => {
   sqlcommand += ` limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
   return new Promise((resolve, reject) => {
     try {
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(rows)
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
+
+exports.getDrugFlowByTime = data => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `select * from drugsFlow where ${data.type} < ${data.endTime} and ${data.type} > ${data.startTime} limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
           reject(error)
