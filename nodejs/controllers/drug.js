@@ -440,4 +440,44 @@ router.get('/getDrugByTime', (req, res) => {
   })()
 })
 
+router.get('/getDrugsFlow', (req, res) => {
+  const data = req.query
+  if (!data.params) {
+    (async function() {
+      try {
+        const result = await drug.getDrugsFlowAll(data)
+        res.json({
+          code: 1,
+          msg: `查询成功，共查到${result.length}条数据`,
+          data: result
+        })
+      } catch (error) {
+        console.log(error)
+        res.json({
+          code: -1,
+          msg: '服务器错误'
+        })
+      }
+    })()
+  } else {
+    (async function() {
+      try {
+        const result = await drug.getDrugsFlowByParams(JSON.parse(data.params), data)
+        res.json({
+          code: 1,
+          msg: `查询成功，共查到${result.length}条数据`,
+          data: result
+        })
+      } catch (error) {
+        console.log(error)
+        res.json({
+          code: -1,
+          msg: '服务器错误'
+        })
+      }
+      
+    })()
+  }
+})
+
 module.exports = router
