@@ -224,7 +224,8 @@ router.post('/removeUser', (req, res) => {
 
 // 获取用户通过类型
 router.get('/getUserByType', (req, res) => {
-  const type = req.query.type
+  const data = req.query
+  const type = data.type
   if (type === '') {
     res.json({
       code: -1,
@@ -239,7 +240,7 @@ router.get('/getUserByType', (req, res) => {
     })
     return
   }
-  user.getUser(type)
+  user.getUser(type, data)
     .then(data => {
       if (data) {
         res.json({

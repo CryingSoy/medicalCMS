@@ -119,10 +119,10 @@ exports.updateStock = data => {
   })
 }
 
-exports.getOverdueByDay = deadline => {
+exports.getOverdueByDay = (deadline, data) => {
   return new Promise((resolve, reject) => {
     try {
-      const sqlcommand = `select * from drugsInfo where mOverdueTime < ${deadline}`
+      const sqlcommand = `select * from drugsInfo where mOverdueTime < ${deadline} limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
           reject(error)

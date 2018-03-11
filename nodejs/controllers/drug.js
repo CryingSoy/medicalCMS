@@ -351,11 +351,12 @@ router.post('/reduceDrugs', (req, res) => {
 })
 
 router.get('/getOverdueByDay', (req, res) => {
+  const data = req.query
   const deadline = parseInt(req.query.day) || 5
   const stamp = utils.getDay(deadline).getTime()
   !(async function() {
     try {
-      const result = await drug.getOverdueByDay(stamp)
+      const result = await drug.getOverdueByDay(stamp, data)
       res.json({
         code: 1,
         msg: `查询成功，共${result.length}条数据`,

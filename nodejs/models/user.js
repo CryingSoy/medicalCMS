@@ -163,14 +163,14 @@ exports.removeUser = username => {
   })
 }
 
-exports.getUser = type => {
+exports.getUser = (type, data) => {
   return new Promise((resolve, reject) => {
     try {
       let sqlcommand = ''
       if (type === 'admin' || type === 'adminDoctor') {
-        sqlcommand = `select * from adminUser where level = '${type === 'admin' ? '超级管理员' : '校医'}'`
+        sqlcommand = `select * from adminUser where level = '${type === 'admin' ? '超级管理员' : '校医'}' limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
       } else {
-        sqlcommand = `select * from userInfo where type = '${type}'`
+        sqlcommand = `select * from userInfo where type = '${type}' limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
       }
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
