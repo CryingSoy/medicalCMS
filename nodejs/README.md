@@ -1,3 +1,49 @@
+## 获取时间范围内的药品
+---
+
+##### 请求说明
+
+> 
+
+---
+
+###### 接口地址
+
+> admin/drug/getDrugByTime
+
+###### 请求方法
+
+> GET
+
+###### 请求参数
+
+> | 字段 | 是否必传 | 类型 | 说明 |
+> | :--- | :--- | :--- | :--- |
+> | type | 是 | String | mProduceTime或mOverdueTime或mInTime三种 |
+> | startTime | 是 | String | 起始时间，毫秒数 |
+> | endTime | 是 | String | 结束时间，毫秒数 |
+> | page | 否 | Number | 页数 |
+> | pageSize | 否 | Number | 不传默认10条数据一页 |
+
+---
+
+##### 返回数据说明
+
+> 以json格式返回数据
+
+---
+
+###### 字段说明
+
+> | 字段 | 类型 | 说明 |
+> | :--- | :--- | :--- |
+> | code | Int | 状态码 |
+> | data | Object | 数据 |
+> | msg | String | 提示信息 |
+>
+
+
+
 ## 获取快过期的药品
 ---
 

@@ -134,3 +134,19 @@ exports.getOverdueByDay = (deadline, data) => {
     }
   })
 }
+
+exports.getDrugByTime = data => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `select * from drugsInfo where ${data.type} < ${data.endTime} and ${data.type} > ${data.startTime} limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(rows)
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}

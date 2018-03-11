@@ -372,7 +372,7 @@ router.get('/getOverdueByDay', (req, res) => {
   })()
 })
 
-router.get('./getDrugByTime', (req, res) => {
+router.get('/getDrugByTime', (req, res) => {
   const data = req.query
   if (!data.type) {
     res.json({
@@ -395,6 +395,26 @@ router.get('./getDrugByTime', (req, res) => {
     })
     return
   }
+  if (isNaN(data.endTime)) {
+    res.json({
+      code: -1,
+      msg: '请输入数字'
+    })
+    return
+  }
+  if (isNaN(data.startTime)) {
+    res.json({
+      code: -1,
+      msg: '请输入数字'
+    })
+    return
+  }
+  if (!(data.type === 'mProduceTime' || data.type === 'mOverdueTime' || data.type === 'mInTime')) {
+    res.json({
+      code: -1,
+      msg: 'type类型错误'
+    })
+  }
   if (data.startTime >= data.endTime) {
     res.json({
       code: -1,
@@ -402,6 +422,22 @@ router.get('./getDrugByTime', (req, res) => {
     })
     return
   }
+  (async function() {
+    try {
+      const result = await drug.getDrugByTime(data)
+      res.json({
+        code: 1,
+        msg: `查询成功，共查到${result.length}条数据`,
+        data: result
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '服务器错误'
+      })
+    }
+  })()
 })
 
 module.exports = router
