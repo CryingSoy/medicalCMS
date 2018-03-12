@@ -9,7 +9,7 @@
         @close="handleClose(tag)">
         {{tag.label}}: {{tag.word}}
       </el-tag>
-      <el-select class="input-new-tag" style="width: 100px" size="small" v-if="inputVisible" v-model="selectValue" placeholder="请选择">
+      <el-select class="select-tag" size="small" v-if="inputVisible" v-model="selectValue" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -105,7 +105,7 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="200px">
         <template slot-scope="scope">
-          <el-button type="primary" v-waves size="small" @click="addDrugsFormVisible = true">编辑</el-button>
+          <el-button type="primary" v-waves size="small" @click="editForm(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -115,7 +115,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item prop="mBarcode" label="条形码" label-width="100px">
-              <el-input v-model.number="addDrugsForm.mBarcode" auto-complete="off"></el-input>
+              <el-input :disabled="true" v-model.number="addDrugsForm.mBarcode" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="9">
@@ -183,7 +183,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item prop="mStock" label="入库量" label-width="100px">
-              <el-input style="width:100%" v-model.number="addDrugsForm.mStock" auto-complete="off"></el-input>
+              <el-input :disabled="true" style="width:100%" v-model.number="addDrugsForm.mStock" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="9">
@@ -242,9 +242,14 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="addDrugsFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="resetForm('addDrugsForm')">重 置</el-button>
-        <el-button type="primary" @click="submitForm('addDrugsForm')">确认添加</el-button>
+        <el-button type="primary" @click="submitForm('addDrugsForm')">确认编辑</el-button>
       </div>
     </el-dialog>
+
+    <div class="pagination-container">
+      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -252,8 +257,9 @@
 // import { getList, resetPassword, removeUser, addUser } from '@/api/user'
 import waves from '@/directive/waves' // 水波纹指令
 import MdInput from '@/components/MDinput'
-import { getDrugsInfo } from '@/api/drugs'
+import { getDrugsInfo, updateDrugsInfo } from '@/api/drugs'
 import { getOptions } from '@/api/test'
+import store from '@/store'
 
 export default {
   directives: {
@@ -261,6 +267,9 @@ export default {
   },
   data() {
     return {
+      page: 1,
+      pageSize: 10,
+      total: 0,
       addRules: {
         mBarcode: [
           { required: true, message: '请输入条形码', trigger: 'blur' },
@@ -338,7 +347,7 @@ export default {
       },
       inputVisible: false,
       inputValue: '',
-      selectValue: '',
+      selectValue: 'mBarcode',
       options: [
         {
           value: 'mBarcode',
@@ -413,37 +422,50 @@ export default {
     }
   },
   created() {
+    this.fetchAllData()
     this.fetchData()
     this.optionsClass = getOptions()
   },
   methods: {
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.fetchData('', '', this.pageSize)
+    },
+    handleCurrentChange(val) {
+      this.page = val
+      this.fetchData('', '', this.page)
+    },
+    editForm(form) {
+      this.addDrugsFormVisible = true
+      const spArr = form.mClassify.split('/')
+      this.addDrugsForm = {
+        ...form,
+        mClassify: spArr,
+        mProduceTime: new Date(parseInt(form.mProduceTime)),
+        mOverdueTime: new Date(parseInt(form.mOverdueTime)),
+        inputer: store.getters.name,
+        mInPrice: +form.mInPrice,
+        mOutPrice: +form.mInPrice 
+      }
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields()
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let s = ''
-          this.addDrugsForm.mClassify.map(item => {
-            s += item
-          })
-          const a = {
-            ...this.addDrugsForm,
-            mProduceTime: (new Date(this.addDrugsForm.mProduceTime)).getTime(),
-            mOverdueTime: (new Date(this.addDrugsForm.mOverdueTime)).getTime(),
-            mClassify: s,
-            type: 'in',
-            inputer: store.getters.name
-          }
-          saveDrugsInfo(a)
+          this.addDrugsForm.mProduceTime = +new Date(this.addDrugsForm.mProduceTime)
+          this.addDrugsForm.mOverdueTime = +new Date(this.addDrugsForm.mOverdueTime)
+          updateDrugsInfo(this.addDrugsForm)
             .then(res => {
               if (res.data.code === 1) {
                 this.$message({
                   type: 'success',
-                  message: '药品录入成功！'
+                  message: res.data.msg
                 })
                 this.addDrugsFormVisible = false
                 this.resetForm('addDrugsForm')
+                this.fetchData('edit')
               }
             })
         } else {
@@ -454,6 +476,7 @@ export default {
     },
     handleClose(tag) {
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+      this.fetchAllData()
       this.fetchData()
     },
     showInput() {
@@ -476,12 +499,13 @@ export default {
           value: this.selectValue,
           label: str
         })
+        this.fetchAllData()
         this.fetchData()
       }
       this.inputVisible = false
       this.inputValue = ''
     },
-    fetchData() {
+    fetchData(edit, page, pageSize) {
       this.listLoading = true
       const a = []
       this.dynamicTags.map(item => {
@@ -490,14 +514,37 @@ export default {
           'word': item.word
         })
       })
-      getDrugsInfo(JSON.stringify(a))
+      if (!page || !pageSize) {
+        page = this.page
+        pageSize = this.pageSize
+      }
+      getDrugsInfo(JSON.stringify(a), page, pageSize)
         .then(res => {
           if (res.data.code === 1) {
-            this.$message({
-              type: 'success',
-              message: res.data.msg
-            })
+            if (!edit) {
+              this.$message({
+                type: 'success',
+                message: res.data.msg
+              })
+            }
             this.list = res.data.data
+            this.listLoading = false
+          }
+        })
+    },
+    fetchAllData() {
+      this.listLoading = true
+      const a = []
+      this.dynamicTags.map(item => {
+        a.push({
+          'name': item.value,
+          'word': item.word
+        })
+      })
+      getDrugsInfo(JSON.stringify(a), 1, 999)
+        .then(res => {
+          if (res.data.code === 1) {
+            this.total = res.data.data.length
             this.listLoading = false
           }
         })
@@ -521,6 +568,12 @@ export default {
   width: 90px;
   margin-left: 10px;
   vertical-align: bottom;
+}
+
+.select-tag {
+  width: 120px;
+  margin-left: 10px;
+  // vertical-align: bottom;
 }
 
 .drugsInfo {

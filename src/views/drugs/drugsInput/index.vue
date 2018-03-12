@@ -347,8 +347,12 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let s = ''
-          this.addDrugsForm.mClassify.map(item => {
-            s += item
+          this.addDrugsForm.mClassify.map((item,index) => {
+            if (index === 0) {
+              s += item
+            } else {
+              s += '/' + item
+            }
           })
           const a = {
             ...this.addDrugsForm,
