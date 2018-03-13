@@ -258,7 +258,7 @@
 import waves from '@/directive/waves' // 水波纹指令
 import MdInput from '@/components/MDinput'
 import { getDrugsInfo, updateDrugsInfo } from '@/api/drugs'
-import { getOptions } from '@/api/test'
+import { getClassify } from '@/api/other'
 import store from '@/store'
 
 export default {
@@ -424,7 +424,12 @@ export default {
   created() {
     this.fetchAllData()
     this.fetchData()
-    this.optionsClass = getOptions()
+    getClassify()
+      .then(res => {
+        if (res.data.code === 1) {
+          this.optionsClass = JSON.parse(res.data.data)
+        }
+      })
   },
   methods: {
     handleSizeChange(val) {
@@ -445,7 +450,7 @@ export default {
         mOverdueTime: new Date(parseInt(form.mOverdueTime)),
         inputer: store.getters.name,
         mInPrice: +form.mInPrice,
-        mOutPrice: +form.mInPrice 
+        mOutPrice: +form.mInPrice
       }
     },
     resetForm(formName) {

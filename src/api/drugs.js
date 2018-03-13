@@ -13,7 +13,7 @@ export function getDrugsInfo(params, page, pageSize) {
     return request({
       url: '/drug/getDrugsInfo',
       method: 'get',
-      params: { page, pageSize}
+      params: { page, pageSize }
     })
   } else {
     return request({

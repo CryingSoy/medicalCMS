@@ -1,5 +1,5 @@
 <template>
-  <div id="auth">
+  <div class="app-container">
     <el-radio v-model="orderid" label="0" checked="checked">16进制(8HEX)</el-radio>
     <el-radio v-model="orderid" label="1">10进制(10DEC)</el-radio>
     <el-radio v-model="formatID" label="0" checked="checked">正常</el-radio>

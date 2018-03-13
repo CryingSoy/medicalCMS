@@ -114,6 +114,26 @@ export const constantRouterMap = [
     ]
   },
 
+  {
+    path: '/dictionary',
+    component: Layout,
+    meta: { title: '字典表管理', icon: 'manage' },
+    children: [
+      {
+        path: 'classify',
+        name: 'classify',
+        component: () => import('@/views/dictionary/classify/index'),
+        meta: { title: '药品归属', icon: 'classify' }
+      },
+      {
+        path: 'disease',
+        name: 'disease',
+        component: () => import('@/views/dictionary/disease/index'),
+        meta: { title: '症状分类', icon: 'disease' }
+      }
+    ]
+  },
+
   { path: '*', redirect: '/404', hidden: true }
 ]
 

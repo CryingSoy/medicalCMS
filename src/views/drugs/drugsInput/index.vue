@@ -223,7 +223,7 @@
 // import { getList, resetPassword, removeUser, addUser } from '@/api/user'
 import waves from '@/directive/waves' // 水波纹指令
 import MdInput from '@/components/MDinput'
-import { getOptions } from '@/api/test'
+import { getClassify } from '@/api/other'
 import { saveDrugsInfo } from '@/api/drugs'
 import store from '@/store'
 
@@ -336,7 +336,12 @@ export default {
     }
   },
   created() {
-    this.options = getOptions()
+    getClassify()
+      .then(res => {
+        if (res.data.code === 1) {
+          this.options = JSON.parse(res.data.data)
+        }
+      })
     this.fetchData()
   },
   methods: {
@@ -347,7 +352,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let s = ''
-          this.addDrugsForm.mClassify.map((item,index) => {
+          this.addDrugsForm.mClassify.map((item, index) => {
             if (index === 0) {
               s += item
             } else {
