@@ -31,6 +31,7 @@ router.get('/getOthersByName', (req, res) => {
 
 router.post('/changeOthersByName', (req, res) => {
   const data = req.body
+  console.log(req)
   if (!data.name) {
     res.json({
       code: -1,
