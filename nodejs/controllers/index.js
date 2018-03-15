@@ -9,6 +9,8 @@ router.use('/drug', require('./drug'))
 
 router.use('/others', require('./others'))
 
+router.use('/student', require('./student'))
+
 router.get('/', (req, res) => {
   res.end('index')
 })

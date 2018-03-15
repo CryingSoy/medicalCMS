@@ -1,4 +1,188 @@
 
+## 删除学生信息
+---
+
+##### 请求说明
+
+> 
+
+---
+
+###### 接口地址
+
+> admin/student/removeStudentInfo
+
+###### 请求方法
+
+> POST
+
+###### 请求参数
+
+> | 字段 | 是否必传 | 类型 | 说明 |
+> | :--- | :--- | :--- | :--- |
+> | cardId | 是 | String | 卡号 |
+
+---
+
+##### 返回数据说明
+
+> 以json格式返回数据
+
+---
+
+###### 字段说明
+
+> | 字段 | 类型 | 说明 |
+> | :--- | :--- | :--- |
+> | code | Int | 状态码 |
+> | data | Object | 数据 |
+> | msg | String | 提示信息 |
+>
+
+
+## 查询学生信息
+---
+
+##### 请求说明
+
+> 
+
+---
+
+###### 接口地址
+
+> admin/student/getStudentInfo
+
+###### 请求方法
+
+> GET
+
+###### 请求参数
+
+> | 字段 | 是否必传 | 类型 | 说明 |
+> | :--- | :--- | :--- | :--- |
+> | cardId | 是 | String | 卡号「isExist：true代表信息存在，false代表没有该卡号的信息；histroyTreat：历史就诊信息」 |
+
+---
+
+##### 返回数据说明
+
+> 以json格式返回数据
+
+---
+
+###### 字段说明
+
+> | 字段 | 类型 | 说明 |
+> | :--- | :--- | :--- |
+> | code | Int | 状态码 |
+> | data | Object | 数据 |
+> | msg | String | 提示信息 |
+>
+
+
+## 增加学生信息
+---
+
+##### 请求说明
+
+> 
+
+---
+
+###### 接口地址
+
+> admin/student/saveStudentInfo
+
+###### 请求方法
+
+> POST
+
+###### 请求参数
+
+> | 字段 | 是否必传 | 类型 | 说明 |
+> | :--- | :--- | :--- | :--- |
+> | cardId | 是 | String | 卡号 |
+> | name | 是 | String | 姓名 |
+> | stuId | 是 | String | 学号 |
+> | age | 是 | String | 年龄 |
+> | sex | 是 | String | 性别 0：男；1：女 |
+> | height | 否 | String | 身高 |
+> | weight | 否 | String | 体重 |
+> | blood | 否 | String | 血型 |
+> | room | 否 | String | 宿舍 |
+> | allergy | 否 | String | 过敏史 |
+> | depart | 否 | String | 系别 |
+
+---
+
+##### 返回数据说明
+
+> 以json格式返回数据
+
+---
+
+###### 字段说明
+
+> | 字段 | 类型 | 说明 |
+> | :--- | :--- | :--- |
+> | code | Int | 状态码 |
+> | data | Object | 数据 |
+> | msg | String | 提示信息 |
+>
+
+
+## 更改学生信息
+---
+
+##### 请求说明
+
+> 
+
+---
+
+###### 接口地址
+
+> admin/student/changeStudentInfo
+
+###### 请求方法
+
+> POST
+
+###### 请求参数
+
+> | 字段 | 是否必传 | 类型 | 说明 |
+> | :--- | :--- | :--- | :--- |
+> | cardId | 是 | String | 作为标识，不能更改 |
+> | name | 是 | String | 姓名 |
+> | stuId | 是 | String | 学号 |
+> | age | 是 | String | 年龄 |
+> | sex | 是 | String | 性别 0：男；1：女 |
+> | height | 否 | String | 身高 |
+> | weight | 否 | String | 体重 |
+> | blood | 否 | String | 血型 |
+> | room | 否 | String | 宿舍 |
+> | allergy | 否 | String | 过敏史 |
+> | depart | 否 | String | 系别 |
+
+---
+
+##### 返回数据说明
+
+> 以json格式返回数据
+
+---
+
+###### 字段说明
+
+> | 字段 | 类型 | 说明 |
+> | :--- | :--- | :--- |
+> | code | Int | 状态码 |
+> | data | Object | 数据 |
+> | msg | String | 提示信息 |
+>
+
+
 ## 获取时间范围内的药品流向
 ---
 
