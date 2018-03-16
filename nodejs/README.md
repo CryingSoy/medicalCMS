@@ -10,7 +10,7 @@
 
 ###### 接口地址
 
-> admin//treat/saveTreatInfo
+> admin/treat/saveTreatInfo
 
 ###### 请求方法
 
