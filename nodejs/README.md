@@ -1,4 +1,54 @@
 
+## 增加就诊记录
+---
+
+##### 请求说明
+
+> 
+
+---
+
+###### 接口地址
+
+> admin//treat/saveTreatInfo
+
+###### 请求方法
+
+> POST
+
+###### 请求参数
+
+> | 字段 | 是否必传 | 类型 | 说明 |
+> | :--- | :--- | :--- | :--- |
+> | cardId | 是 | String | 卡号 |
+> | name | 是 | String | 学生姓名 |
+> | stuId | 是 | String | 学号 |
+> | disease | 是 | String | 症状名 |
+> | diseaseDetail | 否 | String | 诊断信息 |
+> | medicineDetail | 是 | String | [{},{}...]详细看微信 |
+> | doctor | 是 | String | 就诊医生 |
+> | totalPrice | 是 | String | 总金额 |
+> | doctorRemark | 否 | String | 医嘱 |
+> | restTime | 否 | String | 「不请假则不传」，请假传请假的天数或者小时数或者多少节课？ |
+
+---
+
+##### 返回数据说明
+
+> 以json格式返回数据
+
+---
+
+###### 字段说明
+
+> | 字段 | 类型 | 说明 |
+> | :--- | :--- | :--- |
+> | code | Int | 状态码 |
+> | data | Object | 数据 |
+> | msg | String | 提示信息 |
+>
+
+
 ## 删除学生信息
 ---
 

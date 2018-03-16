@@ -19,7 +19,23 @@ exports.saveDurgsInfo = data => {
 exports.saveDurgsFlow = data => {
   return new Promise((resolve, reject) => {
     try {
-      const sqlcommand = `insert into drugsFlow(mBarcode,inputer,user,useType,useNum,useTotal,mark,mName,useTime) value('${data.mBarcode}','${data.inputer || ''}','${data.user || ''}','${data.type}','${parseInt(data.mStock)}','${parseFloat(data.mStock) * parseFloat(data.mInPrice)}','${data.mark || ''}','${data.mName}','${new Date().getTime()}')`
+      const sqlcommand = `insert into drugsFlow(mBarcode,inputer,user,useType,useNum,useTotal,mark,mName,useTime) value('${data.mBarcode}','${data.inputer || ''}','${data.user || ''}','${data.type}','${parseInt(data.mStock)}','${parseFloat(data.mStock) * parseFloat(data.mInPrice)}','${data.mark || ''}','${data.mName}','${data.getTime || new Date().getTime()}')`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve()
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
+
+exports.saveDurgsFlowV2 = data => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `insert into drugsFlow(mBarcode,inputer,user,useType,useNum,useTotal,mark,mName,useTime) value('${data.mBarcode}','${data.inputer || ''}','${data.user || ''}','${data.type}','${parseInt(data.mStock)}','${data.useTotal}','${data.mark || ''}','${data.mName}','${data.getTime || new Date().getTime()}')`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
           reject(error)
@@ -199,6 +215,22 @@ exports.getDrugFlowByTime = data => {
           reject(error)
         }
         resolve(rows)
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
+
+exports.getDrugStockById = id => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `select mStock from drugsInfo where id = ${id}`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(+rows[0].mStock)
       })
     } catch (error) {
       console.error(error)
