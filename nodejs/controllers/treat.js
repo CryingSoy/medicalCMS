@@ -127,4 +127,43 @@ router.post('/saveTreatInfo', (req, res) => {
   })()
 })
 
+router.get('/getTreatInfoByParams', (req, res) => {
+  const data = req.query
+  if (!data.params) {
+    (async function() {
+      try {
+        const result = await model.getTreatInfoAll(data)
+        res.json({
+          code: 1,
+          msg: `查询成功，共查到${result.length}条数据`,
+          data: result
+        })
+      } catch (error) {
+        console.log(error)
+        res.json({
+          code: -1,
+          msg: '服务器错误'
+        })
+      }
+    })()
+  } else {
+    (async function() {
+      try {
+        const result = await model.getTreatInfoByParams(JSON.parse(data.params), data)
+        res.json({
+          code: 1,
+          msg: `查询成功，共查到${result.length}条数据`,
+          data: result
+        })
+      } catch (error) {
+        console.log(error)
+        res.json({
+          code: -1,
+          msg: '服务器错误'
+        })
+      }
+    })()
+  }
+})
+
 module.exports = router

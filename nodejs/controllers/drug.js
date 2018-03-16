@@ -163,7 +163,6 @@ router.get('/getDrugsInfo', (req, res) => {
           msg: '服务器错误'
         })
       }
-      
     })()
   }
 })
