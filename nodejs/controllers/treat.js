@@ -166,4 +166,59 @@ router.get('/getTreatInfoByParams', (req, res) => {
   }
 })
 
+router.get('/getTreatInfoByTime', (req, res) => {
+  const data = req.query
+  if (!data.type) {
+    res.json({
+      code: -1,
+      msg: 'type不能为空'
+    })
+    return
+  }
+  if (!data.startTime) {
+    res.json({
+      code: -1,
+      msg: '起始时间不能为空'
+    })
+    return
+  }
+  if (!data.startTime) {
+    res.json({
+      code: -1,
+      msg: '起始时间不能为空'
+    })
+    return
+  }
+  if (!data.endTime) {
+    res.json({
+      code: -1,
+      msg: '结束时间不能为空'
+    })
+    return
+  }
+  if (!(data.type === 'treatTime')) {
+    res.json({
+      code: -1,
+      msg: 'type类型错误'
+    })
+    return
+  }
+  (async function() {
+    try {
+      const result = await model.getTreatInfoByTime(data)
+      res.json({
+        code: 1,
+        msg: `共查到${result.length}条数据`,
+        data: result
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '服务器错误或者参数错误'
+      })
+    }
+  })()
+})
+
 module.exports = router
