@@ -221,4 +221,52 @@ router.get('/getTreatInfoByTime', (req, res) => {
   })()
 })
 
+router.get('/getTreatInfoByPrice', (req, res) => {
+  const data = req.query
+  if (!data.minimumAmount) {
+    res.json({
+      code: -1,
+      msg: '最小金额不能为空'
+    })
+    return
+  }
+  if (!data.largestAmount) {
+    res.json({
+      code: -1,
+      msg: '最大金额不能为空'
+    })
+    return
+  }
+  if (isNaN(data.largestAmount)) {
+    res.json({
+      code: -1,
+      msg: 'largestAmount是NaN'
+    })
+    return
+  }
+  if (isNaN(data.minimumAmount)) {
+    res.json({
+      code: -1,
+      msg: 'minimumAmount是NaN'
+    })
+    return
+  }
+  (async function() {
+    try {
+      const result = await model.getTreatInfoByPrice(data)
+      res.json({
+        code: 1,
+        msg: `共查询到${result.length}条数据`,
+        data: result
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '服务器错误或者参数错误'
+      })
+    }
+  })()
+})
+
 module.exports = router
