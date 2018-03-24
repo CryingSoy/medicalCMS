@@ -1,35 +1,37 @@
 <template>
   <div id="auth">
-    <el-select @change="getAuth()" v-model="sltValue">
+    <div class="auth-box">
+      <el-select @change="getAuth()" v-model="sltValue">
       <el-option value="超级管理员">超级管理员</el-option>
       <el-option value="校医">校医</el-option>
       <el-option label="全部" value="">全部</el-option>
       <el-option label="不用过滤" value="notNeedFilter"></el-option>
-    </el-select>
-    <!-- <el-button @click="getAuth()">获取权限数组</el-button> -->
-    <p>权限数组为：{{ authArr }}</p>
-    <el-table :data="tList" v-loading.body="loading" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" label='序号' width="95">
-        <template slot-scope="scope">
-          {{scope.$index}}
-        </template>
-      </el-table-column>
-      <el-table-column label="接口权限">
-        <template slot-scope="scope">
-          <template v-if="scope.row.edit">
-            <el-input class="edit-input" size="small" v-model="scope.row.authArr"></el-input>
-            <el-button class='cancel-btn' size="small" icon="el-icon-refresh" type="warning" @click="cancelEdit(scope.row)">cancel</el-button>
+      </el-select>
+      <!-- <el-button @click="getAuth()">获取权限数组</el-button> -->
+      <p>权限数组为：{{ authArr }}</p>
+      <el-table :data="tList" v-loading.body="loading" element-loading-text="Loading" border fit highlight-current-row>
+        <el-table-column align="center" label='序号' width="95">
+          <template slot-scope="scope">
+            {{scope.$index}}
           </template>
-          <span v-else>{{ scope.row.authArr }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="操作" width="120">
-        <template slot-scope="scope">
-          <el-button v-if="scope.row.edit" type="success" @click="confirmEdit(scope.row)" size="small" icon="el-icon-circle-check-outline">Ok</el-button>
-          <el-button v-else type="primary" @click='scope.row.edit=!scope.row.edit' size="small" icon="el-icon-edit">Edit</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        </el-table-column>
+        <el-table-column label="接口权限">
+          <template slot-scope="scope">
+            <template v-if="scope.row.edit">
+              <el-input class="edit-input" size="small" v-model="scope.row.authArr"></el-input>
+              <el-button class='cancel-btn' size="small" icon="el-icon-refresh" type="warning" @click="cancelEdit(scope.row)">cancel</el-button>
+            </template>
+            <span v-else>{{ scope.row.authArr }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作" width="120">
+          <template slot-scope="scope">
+            <el-button v-if="scope.row.edit" type="success" @click="confirmEdit(scope.row)" size="small" icon="el-icon-circle-check-outline">Ok</el-button>
+            <el-button v-else type="primary" @click='scope.row.edit=!scope.row.edit' size="small" icon="el-icon-edit">Edit</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
@@ -119,4 +121,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.auth-box {
+  margin: 30px;
+}
+</style>
+
 

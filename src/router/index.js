@@ -45,7 +45,7 @@ export const constantRouterMap = [
       path: 'index',
       name: 'auth',
       component: () => import('@/views/auth/index'),
-      meta: { title: '权限管理', icon: 'component' }
+      meta: { title: '权限管理（开发）', icon: 'component' }
     }]
   },
 
@@ -56,7 +56,7 @@ export const constantRouterMap = [
       path: 'index',
       name: 'test',
       component: () => import('@/views/test/index'),
-      meta: { title: '测试', icon: '404' }
+      meta: { title: '测试（开发）', icon: '404' }
     }]
   },
 
@@ -132,6 +132,17 @@ export const constantRouterMap = [
         meta: { title: '症状分类', icon: 'disease' }
       }
     ]
+  },
+
+  {
+    path: '/treat',
+    component: Layout,
+    children: [{
+      path: 'index',
+      name: 'treat',
+      component: () => import('@/views/treat/index'),
+      meta: { title: '就诊', icon: 'treat' }
+    }]
   },
 
   { path: '*', redirect: '/404', hidden: true }
