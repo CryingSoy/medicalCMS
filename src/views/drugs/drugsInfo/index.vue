@@ -110,7 +110,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog title="添加药品" :visible.sync="addDrugsFormVisible" width="50%">
+    <el-dialog title="药品编辑" :visible.sync="addDrugsFormVisible" width="50%">
       <el-form style="margin: 0 30px" :rules="addRules" :model="addDrugsForm" ref="addDrugsForm">
         <el-row>
           <el-col :span="12">
@@ -422,7 +422,7 @@ export default {
     }
   },
   created() {
-    this.fetchAllData()
+    // this.fetchAllData()
     this.fetchData()
     getClassify()
       .then(res => {
@@ -481,7 +481,7 @@ export default {
     },
     handleClose(tag) {
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
-      this.fetchAllData()
+      // this.fetchAllData()
       this.fetchData()
     },
     showInput() {
@@ -504,7 +504,7 @@ export default {
           value: this.selectValue,
           label: str
         })
-        this.fetchAllData()
+        // this.fetchAllData()
         this.fetchData()
       }
       this.inputVisible = false
@@ -533,27 +533,28 @@ export default {
               })
             }
             this.list = res.data.data
-            this.listLoading = false
-          }
-        })
-    },
-    fetchAllData() {
-      this.listLoading = true
-      const a = []
-      this.dynamicTags.map(item => {
-        a.push({
-          'name': item.value,
-          'word': item.word
-        })
-      })
-      getDrugsInfo(JSON.stringify(a), 1, 999)
-        .then(res => {
-          if (res.data.code === 1) {
-            this.total = res.data.data.length
+            this.total = res.data.total
             this.listLoading = false
           }
         })
     }
+    // fetchAllData() {
+    //   this.listLoading = true
+    //   const a = []
+    //   this.dynamicTags.map(item => {
+    //     a.push({
+    //       'name': item.value,
+    //       'word': item.word
+    //     })
+    //   })
+    //   getDrugsInfo(JSON.stringify(a), 1, 999)
+    //     .then(res => {
+    //       if (res.data.code === 1) {
+    //         this.total = res.data.data.length
+    //         this.listLoading = false
+    //       }
+    //     })
+    // }
   }
 }
 </script>

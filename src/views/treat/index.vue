@@ -88,7 +88,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="就诊史" label-width="100px">
-                <el-button size="small" type="primary" icon="el-icon-search">查询</el-button>
+                <el-button @click="searchTreat" size="small" type="primary" icon="el-icon-search">查询</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -107,175 +107,438 @@
       </el-card>
     </div>
 
-    <div id="treat">
-      <el-dialog title="学生信息" align="center" :visible.sync="dialogTableVisible" :before-close="closeStudentInfo">
-        <el-table :data="studentInfo">
-          <el-table-column property="name" label="姓名"></el-table-column>
-          <el-table-column property="age" label="年龄"></el-table-column>
-          <el-table-column property="sex" label="性别"></el-table-column>
-          <el-table-column property="depart" label="系别"></el-table-column>
-          <el-table-column property="studentId" label="学号"></el-table-column>
-        </el-table> 
-        <el-button style="margin-top:20px" @click="searchStudentTreat">历史就诊记录</el-button>
-        <el-table v-show="studentTreatVisible" :data="studentTreat" style="width: 100%">
-          <el-table-column type="expand">
-            <template slot-scope="props">
-              <el-form label-position="left" inline class="table-expand">
-                <el-col :span="24">
-                  <el-form-item label="详细症状" class="diseaseInfo">
-                    <span>{{ props.row.diseaseDetail }}</span>
-                  </el-form-item>
-                </el-col>
-                <el-form-item class="medicineDetail" style="width:100%" v-for="(value, index) in props.row.medicineDetail" :key="index" :label="'药品'+index">
-                  <div>名称：{{ value.name }}</div>
-                  <div>条形码：{{ value.barCode }}</div>
-                  <div>使用数量：{{ value.howUsed }}</div>
-                  <div>单价：{{ value.price }}</div>
-                </el-form-item>
-              </el-form>
-            </template>
-          </el-table-column>
-          <el-table-column prop="time" label="日期" sortable>
-          </el-table-column>
-          <el-table-column prop="total" label="总价" sortable>
-          </el-table-column>
-          <el-table-column prop="disease" label="病因" sortable>
-          </el-table-column>
-          <el-table-column prop="doctorId" label="校医名" sortable>
-          </el-table-column>
-          <el-table-column prop="leaveDay" label="请假天数" sortable>
-          </el-table-column>
-        </el-table>
-      </el-dialog>
-      <el-form status-icon :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="treatForm">
-        <!-- <h3 class="title">就诊</h3> -->
-        <!-- <el-form-item label="卡号" prop="studentId">
-          <el-col :span="20">
-            <el-input v-model="ruleForm.studentId"></el-input>
-          </el-col>
-          <el-col style="padding-left:15px;" :span="4">
-          <el-button type="primary" icon="el-icon-search" @click="queryCardId">查询</el-button>
-          </el-col>
-        </el-form-item> -->
-        <el-form-item label="当前校医" prop="doctorName">
-          <el-col :span="20">
-            <el-input v-model="ruleForm.doctorName"></el-input>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="病因" prop="disease">
-          <el-col :span="20">
-            <el-input v-model="ruleForm.disease"></el-input>
-          </el-col>
-          <el-col style="padding-left:15px;" :span="3">
-            <el-dropdown @command="handleCommand">
-              <el-button type="primary" icon="el-icon-plus"></el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="感冒（上呼吸道感染）">感冒（上呼吸道感染）</el-dropdown-item>
-                <el-dropdown-item command="发烧">发烧</el-dropdown-item>
-                <el-dropdown-item command="头痛">头痛</el-dropdown-item>
-                <el-dropdown-item command="胃痛">胃痛</el-dropdown-item>
-                <el-dropdown-item command="关节扭伤">关节扭伤</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="详细症状" prop="diseaseDetail">
-          <el-col :span="20">
-            <el-input :autosize="{minRows: 3}" type="textarea" v-model="ruleForm.diseaseDetail"></el-input>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="就诊时间" required>
-          <el-col :span="20">
-            <el-form-item prop="treatDate">
-              <el-date-picker type="datetime" placeholder="选择日期" v-model="ruleForm.treatDate" style="width: 100%;"></el-date-picker>
+    <div class="card-box">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span>就诊信息</span>
+        </div>
+        <div id="treat">
+          <el-form status-icon :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="treatForm">
+            <!-- <h3 class="title">就诊</h3> -->
+            <!-- <el-form-item label="卡号" prop="studentId">
+              <el-col :span="20">
+                <el-input v-model="ruleForm.studentId"></el-input>
+              </el-col>
+              <el-col style="padding-left:15px;" :span="4">
+              <el-button type="primary" icon="el-icon-search" @click="queryCardId">查询</el-button>
+              </el-col>
+            </el-form-item> -->
+            <el-form-item label="当前校医" prop="doctorName">
+              <el-col :span="20">
+                <el-input v-model="ruleForm.doctorName"></el-input>
+              </el-col>
             </el-form-item>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="药品搜索" prop="drugName">
-          <el-col :span="7">
-            <el-autocomplete @keyup.enter.native="scan" popper-class="drugSearchResults" v-model="searchItem" :fetch-suggestions="querySearch" placeholder="请输入内容" @select="handleSelect">
-              <i class="el-icon-search el-input__icon" slot="prefix"></i>
-              <i v-show="searchItem" class="el-icon-circle-close el-input__icon" slot="suffix" @click="clearSelectItem"></i>
-              <template slot-scope="props">
-                <div class="name">{{ props.item.name }}<span v-if="props.item.hasOwnProperty('barCode')" class="barCode">[{{ props.item.barCode }}]</span><div class="num">x{{ props.item.num }}</div></div>
-                <span class="useDetail">{{ props.item.useDetail }}</span>
-                <span class="factory">{{ props.item.factory }}</span>
-              </template>
-            </el-autocomplete>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="药品列表">
-          <el-col :span="24">
-            <el-table :summary-method="getSummaries" show-summary stripe align="left" ref="multipleTable" :data="selectArray" tooltip-effect="dark" style="width: 100%">
-            <el-table-column type="selection" width="60">
-            </el-table-column>
-            <el-table-column type="expand">
-              <template slot-scope="props">
-                <el-form label-position="left" inline class="table-expand">
-                  <el-form-item label="厂商">
-                    <span>{{ props.row.factory }}</span>
-                  </el-form-item>
-                  <el-form-item label="详细描述">
-                    <span>{{ props.row.useDetail }}</span>
-                  </el-form-item>
-                </el-form>
-              </template>
-            </el-table-column>
-            <el-table-column label="条形码" width="125">
-              <template slot-scope="scope">{{ scope.row.barCode }}</template>
-            </el-table-column>
-            <el-table-column prop="name" label="名称" width="160">
-            </el-table-column>
-            <el-table-column prop="money" label="单价" width="90" align="center">
-            </el-table-column>
-            <el-table-column prop="selectNum" label="数量" align="center">
-              <template slot-scope="scope">
-                <el-input @change="refreshTableData(scope.$index, selectArray);checkNumber(scope.$index, selectArray)" class="selectNum" v-model="scope.row.selectNum" size="mini"></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column fixed="right" label="操作" width="120">
-              <template slot-scope="scope">
-                <el-button type="text" @click.native.prevent="refreshTableData(scope.$index, selectArray, 'sub')" :disabled="scope.row.selectNum==0">-</el-button>
-                <el-button type="text" @click.native.prevent="refreshTableData(scope.$index, selectArray, 'add')" :disabled="scope.row.selectNum==scope.row.num">+</el-button>
-                <el-button @click.native.prevent="deleteRow(scope.$index, selectArray)" type="text" size="medium">
-                  移除
-                </el-button>
-              </template>
-            </el-table-column>
-            </el-table>
-            <el-button v-if="this.selectArray.length!==0" class="deleteButton" @click="toggleSelection(selectArray)">清除所选</el-button>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="是否请假" prop="leaveDay">
-          <el-radio-group v-model="ruleForm.leaveDay">
-            <el-radio :label="true">是</el-radio>
-            <el-radio :label="false">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="请假时间" v-show="ruleForm.leaveDay">
-          <el-col :span="24">
-            <el-select v-model="ruleForm.leave" placeholder="请选择">
-              <el-option v-for="item in ruleForm.leaveDayArray" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">就诊完成</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
-        </el-form-item>
-      </el-form>
+            <el-form-item label="病因" prop="disease">
+              <el-col :span="20">
+                <el-input v-model="ruleForm.disease"></el-input>
+              </el-col>
+              <el-col style="padding-left:15px;" :span="3">
+                <el-dropdown @command="handleCommand">
+                  <el-button type="primary" icon="el-icon-plus"></el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="感冒（上呼吸道感染）">感冒（上呼吸道感染）</el-dropdown-item>
+                    <el-dropdown-item command="发烧">发烧</el-dropdown-item>
+                    <el-dropdown-item command="头痛">头痛</el-dropdown-item>
+                    <el-dropdown-item command="胃痛">胃痛</el-dropdown-item>
+                    <el-dropdown-item command="关节扭伤">关节扭伤</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="详细症状" prop="diseaseDetail">
+              <el-col :span="20">
+                <el-input :autosize="{minRows: 3}" type="textarea" v-model="ruleForm.diseaseDetail"></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="就诊时间" required>
+              <el-col :span="20">
+                <el-form-item prop="treatDate">
+                  <el-date-picker type="datetime" placeholder="选择日期" v-model="ruleForm.treatDate" style="width: 100%;"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="" align="center" prop="drugName">
+              <el-col :span="20">
+                <el-button type="primary" @click="fetchData">添加药品</el-button>
+                <!-- <el-autocomplete @keyup.enter.native="scan" popper-class="drugSearchResults" v-model="searchItem" :fetch-suggestions="querySearch" placeholder="请输入内容" @select="handleSelect">
+                  <i class="el-icon-search el-input__icon" slot="prefix"></i>
+                  <i v-show="searchItem" class="el-icon-circle-close el-input__icon" slot="suffix" @click="clearSelectItem"></i>
+                  <template slot-scope="props">
+                    <div class="name">{{ props.item.name }}<span v-if="props.item.hasOwnProperty('barCode')" class="barCode">[{{ props.item.barCode }}]</span><div class="num">x{{ props.item.num }}</div></div>
+                    <span class="useDetail">{{ props.item.useDetail }}</span>
+                    <span class="factory">{{ props.item.factory }}</span>
+                  </template>
+                </el-autocomplete> -->
+              </el-col>
+            </el-form-item>
+            <el-form-item label="药品列表">
+              <el-col :span="24">
+                <el-table :summary-method="getSummaries" show-summary stripe align="left" ref="multipleTable" :data="selectArray" tooltip-effect="dark" style="width: 100%">
+                <el-table-column type="selection" width="60">
+                </el-table-column>
+                <el-table-column type="expand">
+                  <template slot-scope="props">
+                    <el-form label-position="left" inline class="table-expand">
+                      <el-form-item label="归属分类">
+                        <span>{{ props.row.mClassify }}</span>
+                      </el-form-item>
+                      <el-form-item label="生产商家">
+                        <span>{{ props.row.factory }}</span>
+                      </el-form-item>
+                      <el-form-item label="用药方式">
+                        <span>{{ props.row.mUseWay }}</span>
+                      </el-form-item>
+                      <el-form-item label="用药疗程">
+                        <span>{{ props.row.mTreatment }}</span>
+                      </el-form-item>
+                      <el-form-item label="进货价">
+                        <span>{{ props.row.mInPrice }}</span>
+                      </el-form-item>
+                      <el-form-item label="生产日期">
+                        <span>{{ props.row.mProduceTime }}</span>
+                      </el-form-item>
+                      <el-form-item label="有效期至">
+                        <span>{{ props.row.mOverdueTime }}</span>
+                      </el-form-item>
+                      <el-form-item label="备注">
+                        <span>{{ props.row.mRemark }}</span>
+                      </el-form-item>
+                    </el-form>
+                  </template>
+                </el-table-column>
+                <el-table-column label="条形码" width="125">
+                  <template slot-scope="scope">{{ scope.row.mBarcode }}</template>
+                </el-table-column>
+                <el-table-column prop="mName" label="名称" width="160">
+                </el-table-column>
+                <el-table-column prop="mType" label="药品类型" width="160">
+                </el-table-column>
+                <el-table-column prop="mOutPrice" label="售价" width="90" align="center">
+                </el-table-column>
+                <el-table-column prop="selectNum" label="数量" align="center">
+                  <template slot-scope="scope">
+                    <el-input @change="refreshTableData(scope.$index, selectArray);checkNumber(scope.$index, selectArray)" class="selectNum" v-model="scope.row.selectNum" size="mini"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="mUnit" label="药品规格" width="90" align="center">
+                </el-table-column>
+                <el-table-column fixed="right" label="操作" width="120">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click.native.prevent="refreshTableData(scope.$index, selectArray, 'sub')" :disabled="scope.row.selectNum==0">-</el-button>
+                    <el-button type="text" @click.native.prevent="refreshTableData(scope.$index, selectArray, 'add')" :disabled="scope.row.selectNum==scope.row.num">+</el-button>
+                    <el-button @click.native.prevent="deleteRow(scope.$index, selectArray)" type="text" size="medium">
+                      移除
+                    </el-button>
+                  </template>
+                </el-table-column>
+                </el-table>
+                <el-button v-if="this.selectArray.length!==0" class="deleteButton" @click="toggleSelection(selectArray)">清除所选</el-button>
+              </el-col>
+            </el-form-item>
+            <!-- <el-form-item label="是否请假" prop="leaveDay">
+              <el-radio-group v-model="ruleForm.leaveDay">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+              </el-radio-group>
+            </el-form-item> -->
+            <!-- <el-form-item label="请假时间" v-show="ruleForm.leaveDay">
+              <el-col :span="24">
+                <el-select v-model="ruleForm.leave" placeholder="请选择">
+                  <el-option v-for="item in ruleForm.leaveDayArray" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-col>
+            </el-form-item> -->
+            <el-form-item label="医嘱" prop="doctorRemark">
+              <el-col :span="20">
+                <el-input :autosize="{minRows: 3}" type="textarea" v-model="ruleForm.doctorRemark"></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item align="center">
+              <el-button type="primary" @click="submitForm('ruleForm')">就诊完成</el-button>
+              <el-button @click="resetForm('ruleForm')">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-card>
     </div>
+
+    <el-dialog title="就诊史" :visible.sync="searchStudentTreatVisible" width="80%">
+      <el-table :data="list" ref="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
+        <el-table-column align="center" label='序号' width="95">
+          <template slot-scope="scope">
+            {{scope.$index}}
+          </template>
+        </el-table-column>
+        <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="drugsInfo">
+            <el-form-item label="学生卡号">
+              <span>{{ props.row.cardId }}</span>
+            </el-form-item>
+            <el-form-item label="诊断信息">
+              <span>{{ props.row.diseaseDetail }}</span>
+            </el-form-item>
+            <el-form-item label="药品列表">
+              <span>{{ props.row.medicineDetail }}</span>
+            </el-form-item>
+            <el-form-item label="医嘱">
+              <span>{{ props.row.doctorRemark }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+        <el-table-column label="学生姓名">
+          <template slot-scope="scope">
+            {{scope.row.name}}
+          </template>
+        </el-table-column>
+        <el-table-column label="学生学号">
+          <template slot-scope="scope">
+            {{scope.row.stuId}}
+          </template>
+        </el-table-column>
+        <el-table-column label="症状名" >
+          <template slot-scope="scope">
+            {{scope.row.disease}}
+          </template>
+        </el-table-column>
+        <el-table-column label="就诊时间" >
+          <template slot-scope="scope">
+            {{scope.row.treatTime}}
+          </template>
+        </el-table-column>
+        <el-table-column label="就诊医生" >
+          <template slot-scope="scope">
+            {{scope.row.doctor}}
+          </template>
+        </el-table-column>
+        <el-table-column label="总金额" >
+          <template slot-scope="scope">
+            {{scope.row.totalPrice}}
+          </template>
+        </el-table-column>
+        <!-- <el-table-column align="center" label="操作" width="200px">
+          <template slot-scope="scope">
+            <el-button type="primary" v-waves size="small" @click="resetClick(scope.row.username)">编辑</el-button>
+            <el-button type="danger" v-waves size="small" @click="removeClick(scope.row.username)">删除</el-button>
+          </template>
+        </el-table-column> -->
+      </el-table>
+
+      <div class="pagination-container">
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        </el-pagination>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="增加药品" :visible.sync="addDrugsFormVisible" width="80%">
+      <p>查询条件：
+        <el-tag
+          :key="tag.value"
+          v-for="tag in dynamicTags"
+          closable
+          :disable-transitions="false"
+          @close="handleClose(tag)">
+          {{tag.label}}: {{tag.word}}
+        </el-tag>
+        <el-select class="select-tag" size="small" v-if="inputVisible" v-model="selectValue" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        <el-input
+          class="input-new-tag"
+          v-if="inputVisible"
+          v-model="inputValue"
+          ref="saveTagInput"
+          size="small"
+          @keyup.enter.native="handleInputConfirm"
+        >
+        </el-input>
+        <el-button v-else class="button-new-tag" size="small" @click="showInput">增加条件</el-button>
+      </p>
+      <el-table :data="addlist" ref="addlist" v-loading.body="addlistLoading" element-loading-text="Loading" border fit highlight-current-row>
+        <el-table-column align="center" label='序号' width="95">
+          <template slot-scope="scope">
+            {{scope.$index}}
+          </template>
+        </el-table-column>
+        <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="drugsInfo">
+            <el-form-item label="归属分类">
+              <span>{{ props.row.mClassify }}</span>
+            </el-form-item>
+            <el-form-item label="生产商家">
+              <span>{{ props.row.factory }}</span>
+            </el-form-item>
+            <el-form-item label="药品规格">
+              <span>{{ props.row.mUnit }}</span>
+            </el-form-item>
+            <el-form-item label="用药方式">
+              <span>{{ props.row.mUseWay }}</span>
+            </el-form-item>
+            <el-form-item label="用药疗程">
+              <span>{{ props.row.mTreatment }}</span>
+            </el-form-item>
+            <el-form-item label="售价">
+              <span>{{ props.row.mOutPrice }}</span>
+            </el-form-item>
+            <el-form-item label="生产日期">
+              <span>{{ props.row.mProduceTime }}</span>
+            </el-form-item>
+            <el-form-item label="有效期至">
+              <span>{{ props.row.mOverdueTime }}</span>
+            </el-form-item>
+            <el-form-item label="备注">
+              <span>{{ props.row.mRemark }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+        <el-table-column label="条形码">
+          <template slot-scope="scope">
+            {{scope.row.mBarcode}}
+          </template>
+        </el-table-column>
+        <el-table-column label="id">
+          <template slot-scope="scope">
+            {{scope.row.id}}
+          </template>
+        </el-table-column>
+        <el-table-column label="药品名字">
+          <template slot-scope="scope">
+            {{scope.row.mName}}
+          </template>
+        </el-table-column>
+        <el-table-column label="药品类型" >
+          <template slot-scope="scope">
+            {{scope.row.mType}}
+          </template>
+        </el-table-column>
+        <el-table-column label="批号" >
+          <template slot-scope="scope">
+            {{scope.row.mBatch}}
+          </template>
+        </el-table-column>
+        <el-table-column label="进货价" >
+          <template slot-scope="scope">
+            {{scope.row.mInPrice}}
+          </template>
+        </el-table-column>
+        <el-table-column label="库存量" >
+          <template slot-scope="scope">
+            {{scope.row.mStock}}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作" width="200px">
+          <template slot-scope="scope">
+            <el-button type="primary" v-waves size="small" @click="handleSelect(scope.row)">添加</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div class="pagination-container">
+        <el-pagination background @size-change="addhandleSizeChange" @current-change="addhandleCurrentChange" :current-page="addpage" :page-sizes="[10, 20, 30, 50]" :page-size="addpageSize" layout="total, sizes, prev, pager, next, jumper" :total="addtotal">
+        </el-pagination>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getStudentInfo } from '@/api/treat'
+import { getStudentInfo, getTreatInfoByParams } from '@/api/treat'
+import { getDrugsInfo } from '@/api/drugs'
+import waves from '@/directive/waves' // 水波纹指令
+import { rfid } from '@/api/rfid'
+import store from '@/store'
 
 export default {
+  directives: {
+    waves
+  },
   name: 'treat',
   data () {
     return {
+      inputVisible: false,
+      inputValue: '',
+      selectValue: 'mBarcode',
+      options: [
+        {
+          value: 'mBarcode',
+          label: '条形码'
+        },
+        {
+          value: 'id',
+          label: 'id'
+        },
+        {
+          value: 'mName',
+          label: '药品名称'
+        },
+        {
+          value: 'mType',
+          label: '药品类型'
+        },
+        {
+          value: 'mClassify',
+          label: '归属分类'
+        },
+        {
+          value: 'factory',
+          label: '生产厂家'
+        },
+        {
+          value: 'mUnit',
+          label: '药品规格'
+        },
+        {
+          value: 'mUseWay',
+          label: '用药方式'
+        },
+        {
+          value: 'mTreatment',
+          label: '用药疗程'
+        },
+        {
+          value: 'mRemark',
+          label: '备注'
+        },
+        {
+          value: 'mBatch',
+          label: '批号'
+        },
+        {
+          value: 'mStock',
+          label: '库存量'
+        },
+        {
+          value: 'mInPrice',
+          label: '进货价'
+        },
+        {
+          value: 'mOutPrice',
+          label: '售价'
+        }
+      ],
+      dynamicTags: [],
+      addtotal: 0,
+      addpage: 1,
+      addpageSize: 10,
+      addlist: [],
+      addlistLoading: false,
+      addDrugsFormVisible: false,
+      total: 0,
+      page: 1,
+      pageSize: 10,
+      list: [],
+      listLoading: false,
+      searchStudentTreatVisible: false,
+      rfidreader: rfid.createNew(),
       loading: false,
       orderid: '0',
       formatID: '0',
@@ -352,16 +615,21 @@ export default {
     }
   },
   mounted () {
-    // this.ruleForm.doctorName = this.userInfo.name
-    var rfidreader = window.rfidreader
-    rfidreader.onResult(resultdata => {
-      this.stop()
+    this.ruleForm.doctorName = store.getters.name
+    if (!this.rfidreader.TryConnect()) {
+      this.$alert('浏览器不支持，请更换浏览器后重试！', '提示', {
+        confirmButtonText: '确定',
+        callback: action => {}
+      })
+    }
+    this.rfidreader.onResult(resultdata => {
       switch (resultdata.FunctionID) {
         case 0:
           if (resultdata.Result > 0) {
-            // this.studentInfo.cardId = resultdata.strData
+            this.studentInfo.cardId = resultdata.strData
             getStudentInfo(resultdata.strData)
             .then(res => {
+              this.Stop()
               this.loading = false
               const { data } = res.data
               if (res.data.code === 1 && data.isExist) {
@@ -370,7 +638,6 @@ export default {
                   type: 'success'
                 })
                 this.studentInfo = data.info
-                // console.log(studentInfo)
               }else {
                 this.$message({
                   message: '未查询到该学生的信息',
@@ -384,104 +651,127 @@ export default {
     })
   },
   methods: {
-    closeStudentId () {
-      this.$router.push({
-        path: '/doctorPage'
+    handleInputConfirm() {
+      const inputValue = this.inputValue
+      if (inputValue) {
+        let str = ''
+        this.options.map(item => {
+          if (item.value === this.selectValue) {
+            str = item.label
+          }
+        })
+        this.dynamicTags.push({
+          word: inputValue,
+          value: this.selectValue,
+          label: str
+        })
+        // this.fetchAllData()
+        this.fetchData()
+      }
+      this.inputVisible = false
+      this.inputValue = ''
+    },
+    handleClose(tag) {
+      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+      // this.fetchAllData()
+      this.fetchData()
+    },
+    showInput() {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
       })
     },
-    // filterTag(value, row) {
-    //   return row.tag === value
-    // },
+    addhandleSizeChange(val) {
+      this.addpageSize = val
+      this.fetchData('', '', this.addpageSize)
+    },
+    addhandleCurrentChange(val) {
+      this.addpage = val
+      this.fetchData('', '', this.addpage)
+    },
+    fetchData(edit, page, pageSize) {
+      this.addlistLoading = true
+      this.addDrugsFormVisible = true
+      const a = []
+      this.dynamicTags.map(item => {
+        a.push({
+          'name': item.value,
+          'word': item.word
+        })
+      })
+      if (!page || !pageSize) {
+        page = this.addpage
+        pageSize = this.addpageSize
+      }
+      getDrugsInfo(JSON.stringify(a), page, pageSize)
+        .then(res => {
+          if (res.data.code === 1) {
+            if (!edit) {
+              this.$message({
+                type: 'success',
+                message: res.data.msg
+              })
+            }
+            this.addlist = res.data.data
+            this.addtotal = res.data.total
+            this.addlistLoading = false
+          }
+        })
+    },
+    handleSizeChange(val) {
+      const a = [{ "name": 'cardId', "word": this.studentInfo.cardId }]
+      this.pageSize = val
+      this.searchTreat(JSON.stringify(a))
+    },
+    handleCurrentChange(val) {
+      const a = [{ "name": 'cardId', "word": this.studentInfo.cardId }]
+      this.page = val
+      this.searchTreat(JSON.stringify(a))
+    },
+    searchTreat() {
+      if (this.studentInfo.stuId === undefined || this.studentInfo.stuId === '') {
+      this.$message({
+        message: '学号不能为空',
+        type: 'error'
+      })
+      return
+      } else {
+        this.searchStudentTreatVisible = true;
+        const a = [{ "name": 'stuId', "word": this.studentInfo.stuId }]
+        getTreatInfoByParams(JSON.stringify(a), this.page, this.pageSize)
+          .then(res => {
+            if (res.data.code === 1) {
+              if (res.data.data.length !== 0) {
+                this.$message({
+                  message: `查询学号为${this.studentInfo.stuId}的就诊史成功`,
+                  type: 'success'
+                })
+                this.total = res.data.total
+                this.list = res.data.data
+              } else {
+                this.$message({
+                  message: `学号为${this.studentInfo.stuId}尚未拥有就诊史`,
+                  type: 'warning'
+                })
+              }
+            }
+          })
+      }
+    },
     queryCardId () {
-      // if (this.searchStudentId === '') {
-      //   this.$message({
-      //     message: '卡号不能为空',
-      //     type: 'error'
-      //   })
-      //   return
-      // }else {
       this.loading = true
-      this.start()
+      this.Start()
       setTimeout(() => {
         if (this.loading) {
           this.loading = false
-          this.stop()
+          this.Stop()
           this.$message({
             type: 'warning',
             message: '读卡超时'
           })
         }
-      }, 3000)
-      // }
-      // this.$axios.post('http://localhost:3000/studentSearch', {
-      //   studentId: this.ruleForm.studentId
-      // }).then(res => {
-      //   if (res.status === 200 && res.statusText === 'OK') {
-      //     const { data } = res
-      //     let serverBackData = data
-      //     console.log(serverBackData)
-      //     if (serverBackData.code === 1) {
-      //       this.dialogTableVisible = true
-      //       let {name, sex, age, depart, studentId} = serverBackData.data[0]
-      //       this.studentInfo.push({
-      //         name,
-      //         sex,
-      //         age,
-      //         depart,
-      //         studentId
-      //       })
-      //     } else if (serverBackData.code === -1) {
-      //       this.$message({
-      //         message: '未查询到该学生的信息',
-      //         type: 'error'
-      //       })
-      //     }
-      //   }
-      // })
-    },
-    searchStudentTreat () {
-      if (this.studentTreatVisible) {
-        this.studentTreatVisible = false
-        while (this.studentTreat.length > 0) {
-          this.studentTreat.pop()
-        }
-        return
-      }
-      this.$axios.post('http://localhost:3000/searchStudentTreat', {
-        studentId: this.studentInfo[0].studentId
-      }).then(res => {
-        if (res.status === 200 && res.statusText === 'OK') {
-          const { data } = res
-          let serverBackData = data
-          console.log(serverBackData)
-          if (serverBackData.code === 1) {
-            this.studentTreatVisible = true
-            serverBackData.data.map(item => {
-              let {time, total, disease, diseaseDetail, medicineDetail, doctorId, leaveDay} = item
-              let medicineDetailArray = medicineDetail.split('+')
-              // console.log(medicineDetailArray)
-              medicineDetail = medicineDetailArray.map(items => {
-                return JSON.parse(items)
-              })
-              // console.log(medicineDetail)
-              this.studentTreat.push({
-                time,
-                total,
-                disease,
-                diseaseDetail,
-                medicineDetail,
-                doctorId,
-                leaveDay
-              })
-            })
-          } else if (serverBackData.code === -1) {
-            this.$message({
-              message: '未查询到该学生的就诊信息',
-              type: 'error'
-            })
-          }
-        }
-      })
+      }, 5000)
     },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
@@ -539,28 +829,35 @@ export default {
         this.ruleForm.diseaseDetail = '关节扭伤的常见症状有疼痛、肿胀、关节活动不灵等，其中疼痛是每个关节扭伤的病人都会出现的症状，而肿胀、皮肤青紫、关节不能转动则是扭伤的常见表现。'
       }
     },
-    querySearch (queryString, cb) {
-      this.$axios.post('http://localhost:3000/drugSearch', {
-        searchItem: this.searchItem
-      }).then(res => {
-        if (res.status === 200 && res.statusText === 'OK') {
-          const { data } = res
-          let serverBackData = data
-          clearTimeout(this.timeout)
-          this.timeout = setTimeout(() => {
-            if (serverBackData.code === -1) {
-              this.searchArray = [{
-                'name': serverBackData.msg
-              }]
-              cb(this.searchArray)
-            } else {
-              this.searchArray = serverBackData.data
-              cb(this.searchArray)
-            }
-          }, 300 * Math.random())
-        }
-      })
-    },
+    // querySearch (queryString, cb) {
+      // const a = [{name: 'mName', word: this.searchItem}]
+      // getDrugsInfo(JSON.stringify(a), 1, 99999999999999)
+      //   .then(res => {
+      //     if (res.data.code === 1) {
+      //       console.log(res.data.data)
+      //     }
+      //   })
+      // this.$axios.post('http://localhost:3000/drugSearch', {
+      //   searchItem: this.searchItem
+      // }).then(res => {
+      //   if (res.status === 200 && res.statusText === 'OK') {
+      //     const { data } = res
+      //     let serverBackData = data
+      //     clearTimeout(this.timeout)
+      //     this.timeout = setTimeout(() => {
+      //       if (serverBackData.code === -1) {
+      //         this.searchArray = [{
+      //           'name': serverBackData.msg
+      //         }]
+      //         cb(this.searchArray)
+      //       } else {
+      //         this.searchArray = serverBackData.data
+      //         cb(this.searchArray)
+      //       }
+      //     }, 300 * Math.random())
+      //   }
+      // })
+    // },
     closeStudentInfo () {
       while (this.studentInfo.length > 0) {
         this.studentInfo.pop()
@@ -572,21 +869,18 @@ export default {
       this.studentTreatVisible = false
     },
     handleSelect (item) {
-      if (item.name.indexOf('未搜索') > -1) {
-        console.log('-1')
-      } else {
-        let a = false
-        this.selectArray.map((items, index) => {
-          if (items.name === item.name) {
-            this.refreshTableData(index, this.selectArray, 'add')
-            a = true
-          }
-        })
-        if (!a) {
-          item.selectNum = 1
-          this.selectArray.push(item)
+      let a = false
+      this.selectArray.map((items, index) => {
+        if (items.name === item.mName) {
+          this.refreshTableData(index, this.selectArray, 'add')
+          a = true
         }
+      })
+      if (!a) {
+        item.selectNum = 1
+        this.selectArray.push(item)
       }
+      this.addDrugsFormVisible = false
     },
     scan () {
       this.timeouts = setTimeout(() => {
@@ -738,24 +1032,22 @@ export default {
 
       return sums
     },
-    start() {
-      var rfidreader = window.rfidreader
+    Start() {
       var FormatID
       var OrderID
       FormatID = this.formatID
       OrderID = this.orderid
-      rfidreader.Repeat = 1
-      rfidreader.HaltAfterSuccess = 1
-      rfidreader.RequestTypeACardNo(FormatID, OrderID)
+      this.rfidreader.Repeat = 1
+      this.rfidreader.HaltAfterSuccess = 1
+      this.rfidreader.RequestTypeACardNo(FormatID, OrderID)
     },
-    stop() {
-      var rfidreader = window.rfidreader
+    Stop() {
       var FormatID
       var OrderID
       FormatID = this.formatID
       OrderID = this.orderid
-      rfidreader.Repeat = 0
-      rfidreader.RequestTypeACardNo(FormatID, OrderID)
+      this.rfidreader.Repeat = 0
+      this.rfidreader.RequestTypeACardNo(FormatID, OrderID)
     }
   }
 }
@@ -768,8 +1060,8 @@ export default {
   display: flex;
   justify-content: space-around;
   .treatForm {
-    max-width: 1080px;
-    min-width: 720px;
+    // max-width: 1080px;
+    min-width: 1080px;
     width: 70%;
   }
 }
@@ -794,6 +1086,7 @@ export default {
 .card-box{
   display: flex;
   justify-content: space-around;
+  background: rgba(156, 156, 156, 0.014)
 }
 
 .box-card {
@@ -801,6 +1094,41 @@ export default {
   // min-width: 720px;
   width: 100%;
   margin: 30px;
+}
+
+.drugsInfo {
+  font-size: 0;
+  .label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 33%;
+  }
+}
+
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+
+.select-tag {
+  width: 120px;
+  margin-left: 10px;
+  // vertical-align: bottom;
 }
 
 // .treatForm {
@@ -871,26 +1199,26 @@ export default {
 //   margin-top: 20px;
 // }
 
-// .table-expand {
-//   font-size: 0;
-// }
-// .table-expand label {
-//   width: 90px;
-//   color: #99a9bf;
-// }
-// .table-expand .el-form-item {
-//   margin-right: 0;
-//   margin-bottom: 0;
-//   width: 50%;
-// }
+.table-expand {
+  font-size: 0;
+}
+.table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
+}
 
-// .deleteButton {
-//   position: relative;
-//   float: right;
-//   right: 12px;
-//   bottom: 45px;
-//   z-index: 999;
-// }
+.deleteButton {
+  position: relative;
+  float: right;
+  right: 12px;
+  bottom: 45px;
+  z-index: 999;
+}
 
 // .title {
 //   font-size: 24px;
@@ -906,9 +1234,9 @@ export default {
 //   padding-bottom: 20px;
 // }
 
-// .selectNum {
-//   width: 55px !important;
-// }
+.selectNum {
+  width: 55px !important;
+}
 
 // .el-input .el-input__inner {
 //     padding: 0 !important;

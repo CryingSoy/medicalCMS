@@ -8,3 +8,10 @@ export function getStudentInfo(cardId) {
     })
 }
 
+export function getTreatInfoByParams(params, page, pageSize) {
+    return request({
+      url: '/treat/getTreatInfoByParams',
+      method: 'get',
+      params: { params, page, pageSize }
+    })
+}
