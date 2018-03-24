@@ -133,10 +133,12 @@ router.get('/getTreatInfoByParams', (req, res) => {
     (async function() {
       try {
         const result = await model.getTreatInfoAll(data)
+        const total = await model.getTreatInfoAllTotal(data)
         res.json({
           code: 1,
           msg: `查询成功，共查到${result.length}条数据`,
-          data: result
+          data: result,
+          total
         })
       } catch (error) {
         console.log(error)
@@ -150,10 +152,12 @@ router.get('/getTreatInfoByParams', (req, res) => {
     (async function() {
       try {
         const result = await model.getTreatInfoByParams(JSON.parse(data.params), data)
+        const total = await model.getTreatInfoByParamsTotal(JSON.parse(data.params), data)
         res.json({
           code: 1,
           msg: `查询成功，共查到${result.length}条数据`,
-          data: result
+          data: result,
+          total
         })
       } catch (error) {
         console.log(error)
@@ -206,10 +210,12 @@ router.get('/getTreatInfoByTime', (req, res) => {
   (async function() {
     try {
       const result = await model.getTreatInfoByTime(data)
+      const total = await model.getTreatInfoByTimeTotal(data)
       res.json({
         code: 1,
         msg: `共查到${result.length}条数据`,
-        data: result
+        data: result,
+        total
       })
     } catch (error) {
       console.log(error)
@@ -254,10 +260,12 @@ router.get('/getTreatInfoByPrice', (req, res) => {
   (async function() {
     try {
       const result = await model.getTreatInfoByPrice(data)
+      const total = await model.getTreatInfoByPriceTotal(data)
       res.json({
         code: 1,
         msg: `共查询到${result.length}条数据`,
-        data: result
+        data: result,
+        total
       })
     } catch (error) {
       console.log(error)

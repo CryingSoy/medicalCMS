@@ -168,9 +168,9 @@ exports.getUser = (type, data) => {
     try {
       let sqlcommand = ''
       if (type === 'admin' || type === 'adminDoctor') {
-        sqlcommand = `select * from adminUser where level = '${type === 'admin' ? '超级管理员' : '校医'}' limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
+        sqlcommand = `select * from adminUser where level = '${type === 'admin' ? '超级管理员' : '校医'}'`
       } else {
-        sqlcommand = `select * from userInfo where type = '${type}' limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
+        sqlcommand = `select * from userInfo where type = '${type}'`
       }
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
