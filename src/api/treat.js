@@ -15,3 +15,11 @@ export function getTreatInfoByParams(params, page, pageSize) {
       params: { params, page, pageSize }
     })
 }
+
+export function saveTreatInfo(data) {
+    return request({
+      url: '/treat/saveTreatInfo',
+      method: 'post',
+      data
+    })
+}

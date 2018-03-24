@@ -150,13 +150,13 @@
                 <el-input :autosize="{minRows: 3}" type="textarea" v-model="ruleForm.diseaseDetail"></el-input>
               </el-col>
             </el-form-item>
-            <el-form-item label="就诊时间" required>
+            <!-- <el-form-item label="就诊时间" required>
               <el-col :span="20">
                 <el-form-item prop="treatDate">
                   <el-date-picker type="datetime" placeholder="选择日期" v-model="ruleForm.treatDate" style="width: 100%;"></el-date-picker>
                 </el-form-item>
               </el-col>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="" align="center" prop="drugName">
               <el-col :span="20">
                 <el-button type="primary" @click="fetchData">添加药品</el-button>
@@ -211,7 +211,7 @@
                 </el-table-column>
                 <el-table-column prop="mName" label="名称" width="160">
                 </el-table-column>
-                <el-table-column prop="mType" label="药品类型" width="160">
+                <el-table-column prop="mType" label="药品类型" width="100">
                 </el-table-column>
                 <el-table-column prop="mOutPrice" label="售价" width="90" align="center">
                 </el-table-column>
@@ -220,7 +220,9 @@
                     <el-input @change="refreshTableData(scope.$index, selectArray);checkNumber(scope.$index, selectArray)" class="selectNum" v-model="scope.row.selectNum" size="mini"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="mUnit" label="药品规格" width="90" align="center">
+                <el-table-column prop="mUnit" label="单位" width="90" align="center">
+                </el-table-column>
+                <el-table-column prop="mStock" label="库存" width="90" align="center">
                 </el-table-column>
                 <el-table-column fixed="right" label="操作" width="120">
                   <template slot-scope="scope">
@@ -273,18 +275,26 @@
         <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="drugsInfo">
-            <el-form-item label="学生卡号">
-              <span>{{ props.row.cardId }}</span>
-            </el-form-item>
+            <el-row>
+              <el-form-item label="学生卡号">
+                <span>{{ props.row.cardId }}</span>
+              </el-form-item>
+            </el-row>
+            <el-row>
             <el-form-item label="诊断信息">
               <span>{{ props.row.diseaseDetail }}</span>
             </el-form-item>
+            </el-row>
+            <el-row>
             <el-form-item label="药品列表">
               <span>{{ props.row.medicineDetail }}</span>
             </el-form-item>
+            </el-row>
+            <el-row>
             <el-form-item label="医嘱">
               <span>{{ props.row.doctorRemark }}</span>
             </el-form-item>
+            </el-row>
           </el-form>
         </template>
       </el-table-column>
@@ -451,7 +461,7 @@
 </template>
 
 <script>
-import { getStudentInfo, getTreatInfoByParams } from '@/api/treat'
+import { getStudentInfo, getTreatInfoByParams, saveTreatInfo } from '@/api/treat'
 import { getDrugsInfo } from '@/api/drugs'
 import waves from '@/directive/waves' // 水波纹指令
 import { rfid } from '@/api/rfid'
@@ -562,6 +572,7 @@ export default {
         diseaseDetail: '',
         drugName: '',
         leaveDay: '',
+        doctorRemark: '',
         leave: '',
         leaveDayArray: [
           {
@@ -778,32 +789,57 @@ export default {
         if (valid) {
           let medicine = this.selectArray.map(item => {
             return {
-              name: item.name,
-              barCode: item.barCode,
-              howUsed: item.selectNum,
-              price: item.money
+              id: item.id,
+              mBarcode: item.mBarcode,
+              mName: item.mName,
+              mType: item.mType,
+              mClassify: item.mClassify,
+              factory: item.factory,
+              mUnit: item.mUnit,
+              mUseWay: item.mUseWay,
+              mTreatment: item.mTreatment,
+              num: item.selectNum,
+              price: item.selectNum * item.mOutPrice
             }
           })
-          this.$axios.post('http://localhost:3000/treatSave', {
-            studentId: this.ruleForm.studentId,
-            time: this.ruleForm.treatDate,
-            total: this.totalMoney,
+          // console.log(medicine)
+          saveTreatInfo({
+            cardId: this.studentInfo.cardId,
+            name: this.studentInfo.name,
+            stuId: this.studentInfo.stuId,
             disease: this.ruleForm.disease,
             diseaseDetail: this.ruleForm.diseaseDetail,
-            doctorId: this.ruleForm.doctorName,
-            medicineDetail: medicine,
-            leaveDay: this.ruleForm.leave
-          }).then(res => {
-            if (res.status === 200 && res.statusText === 'OK') {
-              if (res.data.code === 1) {
-                this.$message({
-                  message: '就诊信息录入成功',
-                  type: 'success'
-                })
-                this.resetForm('ruleForm')
-              }
-            }
+            medicineDetail: JSON.stringify(medicine),
+            doctor: this.ruleForm.doctorName,
+            totalPrice: this.totalMoney,
+            doctorRemark: this.ruleForm.doctorRemark,
+            restTime: ''
           })
+            .then(res => {
+              if (res.data.code === 1) {
+                console.log(res.data)
+              }
+            })
+          // this.$axios.post('http://localhost:3000/treatSave', {
+          //   studentId: this.ruleForm.studentId,
+          //   time: this.ruleForm.treatDate,
+          //   total: this.totalMoney,
+          //   disease: this.ruleForm.disease,
+          //   diseaseDetail: this.ruleForm.diseaseDetail,
+          //   doctorId: this.ruleForm.doctorName,
+          //   medicineDetail: medicine,
+          //   leaveDay: this.ruleForm.leave
+          // }).then(res => {
+          //   if (res.status === 200 && res.statusText === 'OK') {
+          //     if (res.data.code === 1) {
+          //       this.$message({
+          //         message: '就诊信息录入成功',
+          //         type: 'success'
+          //       })
+          //       this.resetForm('ruleForm')
+          //     }
+          //   }
+          // })
         } else {
           console.log('error submit!!')
           return false
@@ -871,7 +907,7 @@ export default {
     handleSelect (item) {
       let a = false
       this.selectArray.map((items, index) => {
-        if (items.name === item.mName) {
+        if (items.mName === item.mName) {
           this.refreshTableData(index, this.selectArray, 'add')
           a = true
         }
@@ -884,7 +920,7 @@ export default {
     },
     scan () {
       this.timeouts = setTimeout(() => {
-        if (this.searchArray.length === 1 && this.searchArray[0].barCode === this.searchItem) {
+        if (this.searchArray.length === 1 && this.searchArray[0].mBarCode === this.searchItem) {
           let a = false
           this.selectArray.map((items, index) => {
             if (items.name === this.searchArray[0].name) {
@@ -912,7 +948,7 @@ export default {
         })
         array[index].selectNum = 0
       }
-      if (parseInt(array[index].selectNum) < 0 || parseInt(array[index].selectNum) > parseInt(array[index].num)) {
+      if (parseInt(array[index].selectNum) < 0 || parseInt(array[index].selectNum) > parseInt(array[index].mStock)) {
         this.$message({
           message: '数量大于或小于库存',
           type: 'warning'
@@ -973,7 +1009,7 @@ export default {
               name: '数量',
               num: Number(item[column.property])
             }
-          } else if (column.property === 'money') {
+          } else if (column.property === 'mOutPrice') {
             return {
               name: '单价',
               value: Number(item[column.property]),
@@ -1102,11 +1138,11 @@ export default {
     width: 90px;
     color: #99a9bf;
   }
-  .el-form-item {
-    margin-right: 0;
-    margin-bottom: 0;
-    width: 33%;
-  }
+  // .el-form-item {
+  //   margin-right: 0;
+  //   margin-bottom: 0;
+  //   width: 33%;
+  // }
 }
 
 .el-tag + .el-tag {
