@@ -134,10 +134,12 @@ router.get('/getDrugsInfo', (req, res) => {
     (async function() {
       try {
         const result = await drug.getDrugsInfoAll(data)
+        const total = await drug.getDrugsInfoAllTotal(data)
         res.json({
           code: 1,
           msg: `查询成功，共查到${result.length}条数据`,
-          data: result
+          data: result,
+          total
         })
       } catch (error) {
         console.log(error)
@@ -151,10 +153,12 @@ router.get('/getDrugsInfo', (req, res) => {
     (async function() {
       try {
         const result = await drug.getDrugsInfoByParams(JSON.parse(data.params), data)
+        const total = await drug.getDrugsInfoByParamsTotal(JSON.parse(data.params), data)
         res.json({
           code: 1,
           msg: `查询成功，共查到${result.length}条数据`,
-          data: result
+          data: result,
+          total
         })
       } catch (error) {
         console.log(error)
@@ -356,10 +360,12 @@ router.get('/getOverdueByDay', (req, res) => {
   !(async function() {
     try {
       const result = await drug.getOverdueByDay(stamp, data)
+      const total = await drug.getOverdueByDayTotal(stamp, data)
       res.json({
         code: 1,
         msg: `查询成功，共${result.length}条数据`,
-        data: result
+        data: result,
+        total
       })
     } catch (error) {
       console.log(error)
@@ -424,10 +430,12 @@ router.get('/getDrugByTime', (req, res) => {
   (async function() {
     try {
       const result = await drug.getDrugByTime(data)
+      const total = await drug.getDrugByTimeTotal(data)
       res.json({
         code: 1,
         msg: `查询成功，共查到${result.length}条数据`,
-        data: result
+        data: result,
+        total
       })
     } catch (error) {
       console.log(error)
@@ -445,10 +453,12 @@ router.get('/getDrugsFlow', (req, res) => {
     (async function() {
       try {
         const result = await drug.getDrugsFlowAll(data)
+        const total = await drug.getDrugsFlowAllTotal(data)
         res.json({
           code: 1,
           msg: `查询成功，共查到${result.length}条数据`,
-          data: result
+          data: result,
+          total
         })
       } catch (error) {
         console.log(error)
@@ -462,10 +472,12 @@ router.get('/getDrugsFlow', (req, res) => {
     (async function() {
       try {
         const result = await drug.getDrugsFlowByParams(JSON.parse(data.params), data)
+        const total = await drug.getDrugsFlowByParamsTotal(JSON.parse(data.params), data)
         res.json({
           code: 1,
           msg: `查询成功，共查到${result.length}条数据`,
-          data: result
+          data: result,
+          total
         })
       } catch (error) {
         console.log(error)
@@ -474,7 +486,6 @@ router.get('/getDrugsFlow', (req, res) => {
           msg: '服务器错误'
         })
       }
-      
     })()
   }
 })
@@ -532,10 +543,12 @@ router.get('/getDrugsFlowByTime', (req, res) => {
   (async function() {
     try {
       const result = await drug.getDrugFlowByTime(data)
+      const total = await drug.getDrugFlowByTimeTotal(data)
       res.json({
         code: 1,
         msg: `查询成功，共查到${result.length}条数据`,
-        data: result
+        data: result,
+        total
       })
     } catch (error) {
       console.log(error)
