@@ -33,7 +33,7 @@ export const constantRouterMap = [
     // hidden: true,
     children: [{
       path: '',
-      name: 'Dashboard',
+      // name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard' }
     }]
@@ -64,7 +64,7 @@ export const constantRouterMap = [
   {
     path: '/user',
     component: Layout,
-    redirect: '/user/admininfo',
+    redirect: 'noredirect',
     name: 'user',
     meta: { title: '用户管理', icon: 'example' },
     children: [
@@ -98,6 +98,8 @@ export const constantRouterMap = [
   {
     path: '/drugs',
     component: Layout,
+    redirect: 'noredirect',
+    name: 'drugs',
     meta: { title: '药品管理', icon: 'form' },
     children: [
       {
@@ -118,6 +120,8 @@ export const constantRouterMap = [
   {
     path: '/dictionary',
     component: Layout,
+    redirect: 'noredirect',
+    name: 'dictionary',
     meta: { title: '字典表管理', icon: 'manage' },
     children: [
       {

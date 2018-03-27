@@ -31,3 +31,12 @@ export function saveTreatInfo(data) {
     data
   })
 }
+
+export function getTreatInfoByTime(params) {
+  return request({
+    url: '/treat/getTreatInfoByTime',
+    method: 'get',
+    params
+  })
+}
+
