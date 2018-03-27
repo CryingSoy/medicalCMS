@@ -472,7 +472,7 @@ export default {
     waves
   },
   name: 'treat',
-  data () {
+  data() {
     return {
       inputVisible: false,
       inputValue: '',
@@ -625,7 +625,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.ruleForm.doctorName = store.getters.name
     if (!this.rfidreader.TryConnect()) {
       this.$alert('浏览器不支持，请更换浏览器后重试！', '提示', {
@@ -639,23 +639,23 @@ export default {
           if (resultdata.Result > 0) {
             this.studentInfo.cardId = resultdata.strData
             getStudentInfo(resultdata.strData)
-            .then(res => {
-              this.Stop()
-              this.loading = false
-              const { data } = res.data
-              if (res.data.code === 1 && data.isExist) {
-                this.$message({
-                  message: '查询成功',
-                  type: 'success'
-                })
-                this.studentInfo = data.info
-              }else {
-                this.$message({
-                  message: '未查询到该学生的信息',
-                  type: 'error'
-                })
-              }
-            })
+              .then(res => {
+                this.Stop()
+                this.loading = false
+                const { data } = res.data
+                if (res.data.code === 1 && data.isExist) {
+                  this.$message({
+                    message: '查询成功',
+                    type: 'success'
+                  })
+                  this.studentInfo = data.info
+                } else {
+                  this.$message({
+                    message: '未查询到该学生的信息',
+                    type: 'error'
+                  })
+                }
+              })
           }
           break
       }
@@ -731,25 +731,25 @@ export default {
         })
     },
     handleSizeChange(val) {
-      const a = [{ "name": 'cardId', "word": this.studentInfo.cardId }]
+      const a = [{ 'name': 'cardId', 'word': this.studentInfo.cardId }]
       this.pageSize = val
       this.searchTreat(JSON.stringify(a))
     },
     handleCurrentChange(val) {
-      const a = [{ "name": 'cardId', "word": this.studentInfo.cardId }]
+      const a = [{ 'name': 'cardId', 'word': this.studentInfo.cardId }]
       this.page = val
       this.searchTreat(JSON.stringify(a))
     },
     searchTreat() {
       if (this.studentInfo.stuId === undefined || this.studentInfo.stuId === '') {
-      this.$message({
-        message: '学号不能为空',
-        type: 'error'
-      })
-      return
+        this.$message({
+          message: '学号不能为空',
+          type: 'error'
+        })
+        return
       } else {
-        this.searchStudentTreatVisible = true;
-        const a = [{ "name": 'stuId', "word": this.studentInfo.stuId }]
+        this.searchStudentTreatVisible = true
+        const a = [{ 'name': 'stuId', 'word': this.studentInfo.stuId }]
         getTreatInfoByParams(JSON.stringify(a), this.page, this.pageSize)
           .then(res => {
             if (res.data.code === 1) {
@@ -770,7 +770,7 @@ export default {
           })
       }
     },
-    queryCardId () {
+    queryCardId() {
       this.loading = true
       this.Start()
       setTimeout(() => {
@@ -784,10 +784,10 @@ export default {
         }
       }, 5000)
     },
-    submitForm (formName) {
+    submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let medicine = this.selectArray.map(item => {
+          const medicine = this.selectArray.map(item => {
             return {
               id: item.id,
               mBarcode: item.mBarcode,
@@ -846,12 +846,12 @@ export default {
         }
       })
     },
-    resetForm (formName) {
+    resetForm(formName) {
       this.$refs[formName].resetFields()
       this.selectArray = []
       this.searchItem = ''
     },
-    handleCommand (command) {
+    handleCommand(command) {
       this.ruleForm.disease = command
       if (command === '感冒（上呼吸道感染）') {
         this.ruleForm.diseaseDetail = '上呼吸道感染简称上感，又称普通感冒。是包括鼻腔、咽或喉部急性炎症的总称。广义的上感不是一个疾病诊断，而是一组疾病，包括普通感冒、病毒性咽炎、喉炎、疱疹性咽峡炎、咽结膜热、细菌性咽-扁桃体炎。狭义的上感又称普通感冒，是最常见的急性呼吸道感染性疾病，多呈自限性，但发生率较高。成人每年发生2～4次，儿童发生率更高，每年6～8次。全年皆可发病，冬春季较多。'
@@ -865,36 +865,7 @@ export default {
         this.ruleForm.diseaseDetail = '关节扭伤的常见症状有疼痛、肿胀、关节活动不灵等，其中疼痛是每个关节扭伤的病人都会出现的症状，而肿胀、皮肤青紫、关节不能转动则是扭伤的常见表现。'
       }
     },
-    // querySearch (queryString, cb) {
-      // const a = [{name: 'mName', word: this.searchItem}]
-      // getDrugsInfo(JSON.stringify(a), 1, 99999999999999)
-      //   .then(res => {
-      //     if (res.data.code === 1) {
-      //       console.log(res.data.data)
-      //     }
-      //   })
-      // this.$axios.post('http://localhost:3000/drugSearch', {
-      //   searchItem: this.searchItem
-      // }).then(res => {
-      //   if (res.status === 200 && res.statusText === 'OK') {
-      //     const { data } = res
-      //     let serverBackData = data
-      //     clearTimeout(this.timeout)
-      //     this.timeout = setTimeout(() => {
-      //       if (serverBackData.code === -1) {
-      //         this.searchArray = [{
-      //           'name': serverBackData.msg
-      //         }]
-      //         cb(this.searchArray)
-      //       } else {
-      //         this.searchArray = serverBackData.data
-      //         cb(this.searchArray)
-      //       }
-      //     }, 300 * Math.random())
-      //   }
-      // })
-    // },
-    closeStudentInfo () {
+    closeStudentInfo() {
       while (this.studentInfo.length > 0) {
         this.studentInfo.pop()
       }
@@ -904,7 +875,7 @@ export default {
       this.dialogTableVisible = false
       this.studentTreatVisible = false
     },
-    handleSelect (item) {
+    handleSelect(item) {
       let a = false
       this.selectArray.map((items, index) => {
         if (items.mName === item.mName) {
@@ -918,7 +889,7 @@ export default {
       }
       this.addDrugsFormVisible = false
     },
-    scan () {
+    scan() {
       this.timeouts = setTimeout(() => {
         if (this.searchArray.length === 1 && this.searchArray[0].mBarCode === this.searchItem) {
           let a = false
@@ -937,10 +908,10 @@ export default {
         }
       }, 800)
     },
-    clearSelectItem (ev) {
+    clearSelectItem(ev) {
       this.searchItem = ''
     },
-    checkNumber (index, array) {
+    checkNumber(index, array) {
       if (isNaN(array[index].selectNum)) {
         this.$message({
           message: '请输入数字',
@@ -956,7 +927,7 @@ export default {
         array[index].selectNum = 0
       }
     },
-    toggleSelection (rows) {
+    toggleSelection(rows) {
       if (rows) {
         this.$refs.multipleTable.selection.map((item, index) => {
           this.selectArray.map((items, indexs) => {
@@ -969,21 +940,21 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
-    deleteRow (index, rows) {
+    deleteRow(index, rows) {
       rows.splice(index, 1)
     },
-    selectNumChange (value) {
+    selectNumChange(value) {
       console.log(value)
     },
-    refreshTableData (index, rows, alg) {
+    refreshTableData(index, rows, alg) {
       if (alg === 'add') {
         rows[index].selectNum++
       } else if (alg === 'sub') {
         rows[index].selectNum--
       }
-      let a = rows[index]
-      let aI = index
-      let b = rows.map((item, index) => {
+      const a = rows[index]
+      const aI = index
+      const b = rows.map((item, index) => {
         if (index < aI || index > aI) {
           return item
         } else if (index === aI) {
@@ -995,7 +966,7 @@ export default {
         rows.push(b[index])
       })
     },
-    getSummaries (param) {
+    getSummaries(param) {
       const { columns, data } = param
       const sums = []
       columns.forEach((column, index) => {
@@ -1029,14 +1000,14 @@ export default {
           sums[index] = values.reduce((prev, curr) => {
             if ((typeof values[0]) === 'object') {
               if (values[0].name === '单价') {
-                let value = Number(curr.value)
+                const value = Number(curr.value)
                 if (!isNaN(value)) {
                   return prev + (curr.value * curr.selectNum)
                 } else {
                   return prev
                 }
               } else {
-                let value = Number(curr.num)
+                const value = Number(curr.num)
                 if (!isNaN(value)) {
                   return prev + curr.num
                 } else {
@@ -1044,7 +1015,7 @@ export default {
                 }
               }
             } else {
-              let value = Number(curr)
+              const value = Number(curr)
               if (!isNaN(value)) {
                 return prev + curr
               } else {
