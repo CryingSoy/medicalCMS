@@ -32,6 +32,22 @@ exports.saveTreatInfo = data => {
   })
 }
 
+exports.getTreatInfoAllTotal = data => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `select count(*) from treatInfo limit ${((data.page || 1) - 1) * (data.pageSize || 10)}, ${data.pageSize || 10}`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(rows[0]['count(*)'])
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
+
 exports.getTreatInfoAll = data => {
   return new Promise((resolve, reject) => {
     try {
@@ -41,6 +57,28 @@ exports.getTreatInfoAll = data => {
           reject(error)
         }
         resolve(rows)
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
+
+exports.getTreatInfoByParamsTotal = (params, data) => {
+  let sqlcommand = `select count(*) from treatInfo where ${params[0].name} = '${params[0].word}'`
+  params.splice(0, 1)
+  if (params.length > 0) {
+    params.forEach(e => {
+      sqlcommand += `and ${e.name} = '${e.word}'`
+    })
+  }
+  return new Promise((resolve, reject) => {
+    try {
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(rows[0]['count(*)'])
       })
     } catch (error) {
       console.error(error)
@@ -71,6 +109,22 @@ exports.getTreatInfoByParams = (params, data) => {
   })
 }
 
+exports.getTreatInfoByTimeTotal = data => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `select count(*) from treatInfo where ${data.type} < ${data.endTime} and ${data.type} > ${data.startTime}`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(rows[0]['count(*)'])
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
+
 exports.getTreatInfoByTime = data => {
   return new Promise((resolve, reject) => {
     try {
@@ -80,6 +134,22 @@ exports.getTreatInfoByTime = data => {
           reject(error)
         }
         resolve(rows)
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+}
+
+exports.getTreatInfoByPriceTotal = data => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sqlcommand = `select count(*) from treatInfo where totalPrice < ${data.largestAmount} and totalPrice > ${data.minimumAmount}`
+      mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
+        if (error) {
+          reject(error)
+        }
+        resolve(rows[0]['count(*)'])
       })
     } catch (error) {
       console.error(error)

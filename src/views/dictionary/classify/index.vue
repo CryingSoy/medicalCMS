@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-button @click="addNewClassify" style="margin-left: 30px;" type="primary" icon="el-icon-edit">增加药品归属</el-button>
     <div class="card-box">
-      <el-card v-for="item in classify" :key="item.value" class="box-card">
+      <el-card v-if="item.length !== 0" v-for="item in classify" :key="item.value" class="box-card">
       <!-- <div slot="header" class="clearfix">
         <md-input v-if="item.edit" style="width: 90%; margin: 0; height: 1px" v-model="item.label"></md-input>
         <span v-else>{{ item.label }}</span>
@@ -33,7 +33,8 @@ export default {
   name: 'classify',
   data() {
     return {
-      classify: []
+      classify: [],
+      isSame: false
     }
   },
   mounted() {
@@ -56,6 +57,37 @@ export default {
     MdInput
   },
   methods: {
+    eachC(arr, str) {
+      arr.forEach((item, index) => {
+        item.forEach((v, i) => {
+          if (v.label === str.toString()) {
+            this.isSame = true
+          }
+          if (v.hasOwnProperty('children') && v.children.length !== 0) {
+            this.eachC([v.children], str)
+          }
+        })
+      })
+    },
+    changeClassify(note, value) {
+      const arr = []
+      this.classify.forEach(item => {
+        if (item[0] !== undefined) {
+          arr.push(item[0])
+        }
+      })
+      const str = JSON.stringify(arr)
+      setClassify('mClassify', str)
+        .then(res => {
+          if (res.data.code === 1) {
+            this.$message({
+              type: 'success',
+              message: `${note}：${value} 成功！`
+            })
+            getClassify()
+          }
+        })
+    },
     append(data) {
       this.$prompt('分类名字', '提示', {
         confirmButtonText: '确定',
@@ -63,28 +95,21 @@ export default {
       }).then(({ value }) => {
         if (value !== null) {
           if (value.indexOf(' ') < 0) {
-            const newChild = { label: value, value, children: [] }
-            if (!data.children) {
-              this.$set(data, 'children', [])
-            }
-            data.children.push(newChild)
-            const arr = this.classify.map(item => {
-              return item[0]
-            })
-            const str = JSON.stringify(arr)
-            // str = str.substring(1, str.length - 1)
-            // console.log(str)
-            // console.log(JSON.parse(str))
-            setClassify('mClassify', str)
-              .then(res => {
-                if (res.data.code === 1) {
-                  this.$message({
-                    type: 'success',
-                    message: `添加分类：${value} 成功！`
-                  })
-                  getClassify()
-                }
+            this.isSame = false
+            this.eachC(this.classify, value)
+            if (!this.isSame) {
+              const newChild = { label: value, value }
+              if (!data.children) {
+                this.$set(data, 'children', [])
+              }
+              data.children.push(newChild)
+              this.changeClassify('添加分类', value)
+            } else {
+              this.$message({
+                type: 'error',
+                message: '分类名称已存在'
               })
+            }
           } else {
             this.$message({
               type: 'info',
@@ -116,20 +141,7 @@ export default {
           if (value.indexOf(' ') < 0) {
             children[index].label = value
             children[index].value = value
-            const arr = this.classify.map(item => {
-              return item[0]
-            })
-            const str = JSON.stringify(arr)
-            setClassify('mClassify', str)
-              .then(res => {
-                if (res.data.code === 1) {
-                  this.$message({
-                    type: 'success',
-                    message: `修改分类名称：${value} 成功！`
-                  })
-                  getClassify()
-                }
-              })
+            this.changeClassify('修改分类名称', value)
           } else {
             this.$message({
               type: 'info',
@@ -153,11 +165,20 @@ export default {
       const parent = node.parent
       const children = parent.data.children || parent.data
       const index = children.findIndex(d => d.value === data.value)
-      this.$message({
-        type: 'success',
-        message: '删除分类：' + children[index].label + '成功！'
+      this.$confirm(`此操作将永久删除分类：${children[index].label}，是否继续？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const note = children[index].label
+        children.splice(index, 1)
+        this.changeClassify('删除分类', note)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
-      children.splice(index, 1)
     },
     renderContent(h, { node, data, store }) {
       return (
@@ -177,17 +198,23 @@ export default {
       }).then(({ value }) => {
         if (value !== null) {
           if (value.indexOf(' ') < 0) {
-            this.$message({
-              type: 'success',
-              message: `添加分类：${value} 成功！`
-            })
             // const newChild = { label: value, value, children: [] }
             // if (!data.children) {
             //   this.$set(data, 'children', [])
             // }
             // data.children.push(newChild)
             // console.log(this.classify)
-            this.classify.push([{ label: value, value, children: [] }])
+            this.isSame = false
+            this.eachC(this.classify, value)
+            if (!this.isSame) {
+              this.classify.push([{ label: value, value }])
+              this.changeClassify('添加分类', value)
+            } else {
+              this.$message({
+                type: 'error',
+                message: '分类名称已存在'
+              })
+            }
           } else {
             this.$message({
               type: 'info',
