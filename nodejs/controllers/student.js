@@ -36,7 +36,7 @@ router.get('/getStudentInfo', (req, res) => {
 
 router.get('/getStudentInfoByParams', (req, res) => {
   const data = req.query
-  !(function() {
+  !(async function() {
     try {
       const result = await smodel.getStudentInfoByParams(JSON.parse(data.params), data)
       const total = await smodel.getStudentInfoByParamsTotal(JSON.parse(data.params), data)
