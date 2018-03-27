@@ -26,12 +26,12 @@ export const constantRouterMap = [
   { path: '/404', component: () => import('@/views/404'), hidden: true },
 
   {
-    path: '',
+    path: '/dashboard',
     component: Layout,
     name: 'Dashboard',
     // hidden: true,
     children: [{
-      path: 'dashboard',
+      path: '',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard' }
     }]
