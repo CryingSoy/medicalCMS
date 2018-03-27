@@ -48,7 +48,10 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="电话" label-width="100px">
+              <el-form-item label="电话" label-width="100px" :rules="[
+                { required: true, message: '电话不能为空'},
+                { type: 'number', message: '电话必须为数字值'}
+              ]">
                 <el-input style="width:100%" v-model="studentInfo.phone" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
@@ -159,7 +162,7 @@
             </el-form-item> -->
             <el-form-item label="" align="center" prop="drugName">
               <el-col :span="20">
-                <el-button type="primary" @click="fetchData">添加药品</el-button>
+                <el-button type="primary" icon="el-icon-circle-plus-outline" @click="fetchData">添加药品</el-button>
                 <!-- <el-autocomplete @keyup.enter.native="scan" popper-class="drugSearchResults" v-model="searchItem" :fetch-suggestions="querySearch" placeholder="请输入内容" @select="handleSelect">
                   <i class="el-icon-search el-input__icon" slot="prefix"></i>
                   <i v-show="searchItem" class="el-icon-circle-close el-input__icon" slot="suffix" @click="clearSelectItem"></i>
@@ -495,7 +498,7 @@ export default {
   name: 'treat',
   data() {
     return {
-      isFirst: false,
+      isFirst: true,
       inputVisible: false,
       inputValue: '',
       selectValue: 'mBarcode',
@@ -828,8 +831,18 @@ export default {
           })
           if (this.studentInfo.name !== undefined && this.studentInfo.cardId !== undefined && this.studentInfo.stuId !== undefined && this.studentInfo.age !== undefined && this.studentInfo.sex !== undefined) {
             if (this.isFirst) {
-              saveStudentInfo(this.studentInfo)
-              console.log(this.studentInfo)
+              (name => {
+                saveStudentInfo(this.studentInfo)
+                  .then(res => {
+                    if (res.data.code === 1) {
+                      this.$notify({
+                        title: '成功',
+                        message: `${name}的信息录入成功`,
+                        type: 'success'
+                      })
+                    }
+                  })
+              })(this.studentInfo.name)
               saveTreatInfo({
                 cardId: this.studentInfo.cardId,
                 name: this.studentInfo.name,
@@ -850,6 +863,7 @@ export default {
                     })
                     this.resetForm('ruleForm')
                     this.resetForm('studentInfo')
+                    this.ruleForm.doctorName = store.getters.name
                   }
                 })
             } else {
@@ -873,6 +887,7 @@ export default {
                     })
                     this.resetForm('ruleForm')
                     this.resetForm('studentInfo')
+                    this.ruleForm.doctorName = store.getters.name
                   }
                 })
             }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 // import { Message, MessageBox } from 'element-ui'
-import { Message } from 'element-ui'
+import { Message, Notification } from 'element-ui'
 import store from '../store'
 import { getToken } from '@/utils/auth'
 
@@ -30,10 +30,15 @@ service.interceptors.response.use(
     const res = response.data
     if (res.code === -1 || res.code === -2 || res.code === -3) {
       if (res.msg !== 'token不存在') {
-        Message({
+        // Message({
+        //   message: res.msg,
+        //   type: 'error',
+        //   duration: 5 * 1000
+        // })
+        Notification({
+          title: '警告',
           message: res.msg,
-          type: 'error',
-          duration: 5 * 1000
+          type: 'warning'
         })
       }
     } else {
