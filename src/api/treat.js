@@ -8,6 +8,14 @@ export function getStudentInfo(cardId) {
   })
 }
 
+export function saveStudentInfo(data) {
+  return request({
+    url: '/student/saveStudentInfo',
+    method: 'post',
+    data
+  })
+}
+
 export function getTreatInfoByParams(params, page, pageSize) {
   return request({
     url: '/treat/getTreatInfoByParams',

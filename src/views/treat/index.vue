@@ -11,12 +11,12 @@
         <el-form v-loading="loading" :model="studentInfo" ref="studentInfo">
           <el-row>
             <el-col :span="6">
-              <el-form-item label="姓名" label-width="100px">
+              <el-form-item label="姓名" label-width="100px" required>
                 <el-input style="width:100%" v-model="studentInfo.name" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="年龄" label-width="100px">
+              <el-form-item label="年龄" label-width="100px" required>
                 <el-input v-model="studentInfo.age" auto-complete="off">
                   <template slot="append">岁</template>
                 </el-input>
@@ -30,7 +30,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="性别" label-width="100px">
+              <el-form-item label="性别" label-width="100px" required>
                 <el-radio-group v-model="studentInfo.sex">
                   <el-radio-button label="男"></el-radio-button>
                   <el-radio-button label="女"></el-radio-button>
@@ -72,12 +72,12 @@
 
           <el-row>
             <el-col :span="6">
-              <el-form-item label="学号" label-width="100px">
+              <el-form-item label="学号" label-width="100px" required>
                 <el-input v-model="studentInfo.stuId" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="卡号" label-width="100px">
+              <el-form-item label="卡号" label-width="100px" required>
                 <el-input v-model="studentInfo.cardId" auto-complete="off"></el-input>
               </el-form-item>
             </el-col>
@@ -274,7 +274,7 @@
         </el-table-column>
         <el-table-column type="expand">
         <template slot-scope="props">
-          <el-form label-position="left" inline class="drugsInfo">
+          <el-form label-position="left" class="stuDrugsInfos">
             <el-row>
               <el-form-item label="学生卡号">
                 <span>{{ props.row.cardId }}</span>
@@ -287,7 +287,28 @@
             </el-row>
             <el-row>
             <el-form-item label="药品列表">
-              <span>{{ props.row.medicineDetail }}</span>
+              <el-table :data="JSON.parse(props.row.medicineDetail)" border fit highlight-current-row>
+                <el-table-column prop="mBarcode" label="条形码">
+                </el-table-column>
+                <el-table-column prop="mName" label="药品名称">
+                </el-table-column>
+                <el-table-column prop="mType" label="药品类型">
+                </el-table-column>
+                <el-table-column prop="mClassify" label="药品归属">
+                </el-table-column>
+                <el-table-column prop="factory" label="生产厂商">
+                </el-table-column>
+                <el-table-column prop="mUnit" label="药品规格">
+                </el-table-column>
+                <el-table-column prop="mUseWay" label="用药方式">
+                </el-table-column>
+                <el-table-column prop="mTreatment" label="用药疗程">
+                </el-table-column>
+                <el-table-column prop="num" label="使用数量">
+                </el-table-column>
+                <el-table-column prop="price" label="金额">
+                </el-table-column>
+              </el-table>
             </el-form-item>
             </el-row>
             <el-row>
@@ -461,7 +482,7 @@
 </template>
 
 <script>
-import { getStudentInfo, getTreatInfoByParams, saveTreatInfo } from '@/api/treat'
+import { getStudentInfo, saveStudentInfo, getTreatInfoByParams, saveTreatInfo } from '@/api/treat'
 import { getDrugsInfo } from '@/api/drugs'
 import waves from '@/directive/waves' // 水波纹指令
 import { rfid } from '@/api/rfid'
@@ -474,6 +495,7 @@ export default {
   name: 'treat',
   data() {
     return {
+      isFirst: false,
       inputVisible: false,
       inputValue: '',
       selectValue: 'mBarcode',
@@ -648,11 +670,14 @@ export default {
                     message: '查询成功',
                     type: 'success'
                   })
+                  this.isFirst = false
                   this.studentInfo = data.info
                 } else {
+                  this.isFirst = true
                   this.$message({
-                    message: '未查询到该学生的信息',
-                    type: 'error'
+                    message: '未查询到该学生的信息，该学生为第一次就诊。请填写学生基本信息，就诊成功后会录入该学生信息。',
+                    type: 'warning',
+                    duration: 5000
                   })
                 }
               })
@@ -718,12 +743,10 @@ export default {
       getDrugsInfo(JSON.stringify(a), page, pageSize)
         .then(res => {
           if (res.data.code === 1) {
-            if (!edit) {
-              this.$message({
-                type: 'success',
-                message: res.data.msg
-              })
-            }
+            this.$message({
+              type: 'success',
+              message: `查询成功！一共查询到${res.data.total}条记录`
+            })
             this.addlist = res.data.data
             this.addtotal = res.data.total
             this.addlistLoading = false
@@ -771,6 +794,7 @@ export default {
       }
     },
     queryCardId() {
+      this.resetForm('studentInfo')
       this.loading = true
       this.Start()
       setTimeout(() => {
@@ -802,44 +826,62 @@ export default {
               price: item.selectNum * item.mOutPrice
             }
           })
-          // console.log(medicine)
-          saveTreatInfo({
-            cardId: this.studentInfo.cardId,
-            name: this.studentInfo.name,
-            stuId: this.studentInfo.stuId,
-            disease: this.ruleForm.disease,
-            diseaseDetail: this.ruleForm.diseaseDetail,
-            medicineDetail: JSON.stringify(medicine),
-            doctor: this.ruleForm.doctorName,
-            totalPrice: this.totalMoney,
-            doctorRemark: this.ruleForm.doctorRemark,
-            restTime: ''
-          })
-            .then(res => {
-              if (res.data.code === 1) {
-                console.log(res.data)
-              }
+          if (this.studentInfo.name !== undefined && this.studentInfo.cardId !== undefined && this.studentInfo.stuId !== undefined && this.studentInfo.age !== undefined && this.studentInfo.sex !== undefined) {
+            if (this.isFirst) {
+              saveStudentInfo(this.studentInfo)
+              console.log(this.studentInfo)
+              saveTreatInfo({
+                cardId: this.studentInfo.cardId,
+                name: this.studentInfo.name,
+                stuId: this.studentInfo.stuId,
+                disease: this.ruleForm.disease,
+                diseaseDetail: this.ruleForm.diseaseDetail,
+                medicineDetail: JSON.stringify(medicine),
+                doctor: this.ruleForm.doctorName,
+                totalPrice: this.totalMoney || '0',
+                doctorRemark: this.ruleForm.doctorRemark,
+                restTime: ''
+              })
+                .then(res => {
+                  if (res.data.code === 1) {
+                    this.$message({
+                      type: 'success',
+                      message: '就诊成功！'
+                    })
+                    this.resetForm('ruleForm')
+                    this.resetForm('studentInfo')
+                  }
+                })
+            } else {
+              saveTreatInfo({
+                cardId: this.studentInfo.cardId,
+                name: this.studentInfo.name,
+                stuId: this.studentInfo.stuId,
+                disease: this.ruleForm.disease,
+                diseaseDetail: this.ruleForm.diseaseDetail,
+                medicineDetail: JSON.stringify(medicine),
+                doctor: this.ruleForm.doctorName,
+                totalPrice: this.totalMoney || '0',
+                doctorRemark: this.ruleForm.doctorRemark,
+                restTime: ''
+              })
+                .then(res => {
+                  if (res.data.code === 1) {
+                    this.$message({
+                      type: 'success',
+                      message: '就诊成功！'
+                    })
+                    this.resetForm('ruleForm')
+                    this.resetForm('studentInfo')
+                  }
+                })
+            }
+          } else {
+            this.$message({
+              type: 'warning',
+              message: '请填写学生信息！'
             })
-          // this.$axios.post('http://localhost:3000/treatSave', {
-          //   studentId: this.ruleForm.studentId,
-          //   time: this.ruleForm.treatDate,
-          //   total: this.totalMoney,
-          //   disease: this.ruleForm.disease,
-          //   diseaseDetail: this.ruleForm.diseaseDetail,
-          //   doctorId: this.ruleForm.doctorName,
-          //   medicineDetail: medicine,
-          //   leaveDay: this.ruleForm.leave
-          // }).then(res => {
-          //   if (res.status === 200 && res.statusText === 'OK') {
-          //     if (res.data.code === 1) {
-          //       this.$message({
-          //         message: '就诊信息录入成功',
-          //         type: 'success'
-          //       })
-          //       this.resetForm('ruleForm')
-          //     }
-          //   }
-          // })
+          }
         } else {
           console.log('error submit!!')
           return false
@@ -848,6 +890,7 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
+      this.studentInfo = {}
       this.selectArray = []
       this.searchItem = ''
     },
@@ -974,6 +1017,14 @@ export default {
           sums[index] = '合计'
           return
         }
+        if (index === 3) {
+          sums[index] = ''
+          return
+        }
+        if (index === 8) {
+          sums[index] = ''
+          return
+        }
         const values = data.map(item => {
           if (column.property === 'selectNum') {
             return {
@@ -982,12 +1033,12 @@ export default {
             }
           } else if (column.property === 'mOutPrice') {
             return {
-              name: '单价',
+              name: '售价',
               value: Number(item[column.property]),
               selectNum: item['selectNum']
             }
           } else {
-            return Number(item[column.property])
+            return item[column.property]
           }
         })
         if (!values.every(value => {
@@ -999,7 +1050,7 @@ export default {
         })) {
           sums[index] = values.reduce((prev, curr) => {
             if ((typeof values[0]) === 'object') {
-              if (values[0].name === '单价') {
+              if (values[0].name === '售价') {
                 const value = Number(curr.value)
                 if (!isNaN(value)) {
                   return prev + (curr.value * curr.selectNum)
@@ -1024,7 +1075,7 @@ export default {
             }
           }, 0)
           if ((typeof values[0]) === 'object') {
-            if (values[0].name === '单价') {
+            if (values[0].name === '售价') {
               sums[index] = sums[index].toFixed(2)
               this.totalMoney = sums[index]
               sums[index] += ' 元'
@@ -1109,11 +1160,19 @@ export default {
     width: 90px;
     color: #99a9bf;
   }
-  // .el-form-item {
-  //   margin-right: 0;
-  //   margin-bottom: 0;
-  //   width: 33%;
-  // }
+  .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 33%;
+  }
+}
+
+.stuDrugsInfo {
+  font-size: 0;
+  .label {
+    width: 90px;
+    color: #99a9bf;
+  }
 }
 
 .el-tag + .el-tag {

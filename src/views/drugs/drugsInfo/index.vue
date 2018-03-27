@@ -529,7 +529,7 @@ export default {
             if (!edit) {
               this.$message({
                 type: 'success',
-                message: res.data.msg
+                message: `查询成功！一共查询到${res.data.total}条记录`
               })
             }
             this.list = res.data.data

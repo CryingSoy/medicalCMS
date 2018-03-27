@@ -24,14 +24,16 @@ import Layout from '../views/layout/Layout'
 export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
+  { path: '/', component: () => import('@/views/external/index'), hidden: true },
+  { path: '/queryInfo', component: () => import('@/views/external/queryInfo/index'), hidden: true },
 
   {
     path: '/dashboard',
     component: Layout,
-    name: 'Dashboard',
     // hidden: true,
     children: [{
       path: '',
+      name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard' }
     }]

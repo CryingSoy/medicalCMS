@@ -36,6 +36,7 @@ router.get('/getStudentInfo', (req, res) => {
 
 router.post('/saveStudentInfo', (req, res) => {
   const data = req.body
+  console.log(req)
   if (!data.name) {
     res.json({
       code: -1,
