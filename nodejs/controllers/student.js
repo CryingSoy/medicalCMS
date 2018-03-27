@@ -34,6 +34,28 @@ router.get('/getStudentInfo', (req, res) => {
   })()
 })
 
+router.get('/getStudentInfoByParams', (req, res) => {
+  const data = req.query
+  !(function() {
+    try {
+      const result = await smodel.getStudentInfoByParams(JSON.parse(data.params), data)
+      const total = await smodel.getStudentInfoByParamsTotal(JSON.parse(data.params), data)
+      res.json({
+        code: 1,
+        msg: `查询成功，共查到${result.length}条数据`,
+        data: result,
+        total
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '服务器错误或者参数错误'
+      })
+    }
+  })()
+})
+
 router.post('/saveStudentInfo', (req, res) => {
   const data = req.body
   console.log(req)
