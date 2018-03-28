@@ -13,6 +13,8 @@ router.use('/student', require('./student'))
 
 router.use('/treat', require('./treat'))
 
+router.use('/external', require('./external'))
+
 router.get('/', (req, res) => {
   res.end('index')
 })
