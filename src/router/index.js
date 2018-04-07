@@ -62,6 +62,40 @@ export const constantRouterMap = [
   },
 
   {
+    path: '/statistics',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'statistics',
+    meta: { title: '统计', icon: 'example' },
+    children: [
+      {
+        path: 'usedcount',
+        name: 'usedcount',
+        component: () => import('@/views/statistics/usedcount/index'),
+        meta: { title: '药品消耗统计' }
+      },
+      {
+        path: 'flowcount',
+        name: 'flowcount',
+        component: () => import('@/views/statistics/flowcount/index'),
+        meta: { title: '药品流向统计' }
+      },
+      {
+        path: 'treatcount',
+        name: 'treatcount',
+        component: () => import('@/views/statistics/treatcount/index'),
+        meta: { title: '就诊人数统计' }
+      },
+      {
+        path: 'usedmoneycount',
+        name: 'usedmoneycount',
+        component: () => import('@/views/statistics/usedmoneycount/index'),
+        meta: { title: '药品流水金额统计' }
+      }
+    ]
+  },
+
+  {
     path: '/user',
     component: Layout,
     redirect: 'noredirect',

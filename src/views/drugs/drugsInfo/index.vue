@@ -571,7 +571,7 @@ export default {
   padding-bottom: 0;
 }
 .input-new-tag {
-  width: 90px;
+  width: 150px;
   margin-left: 10px;
   vertical-align: bottom;
 }
