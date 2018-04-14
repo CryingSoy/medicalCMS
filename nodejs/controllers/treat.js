@@ -277,4 +277,151 @@ router.get('/getTreatInfoByPrice', (req, res) => {
   })()
 })
 
+router.get('/getStudentInfoByParams', (req, res) => {
+  const data = req.query
+  !(async function() {
+    try {
+      const result = await smodel.getStudentInfoByParams(JSON.parse(data.params), data)
+      const total = await smodel.getStudentInfoByParamsTotal(JSON.parse(data.params), data)
+      res.json({
+        code: 1,
+        msg: `查询成功，共查到${result.length}条数据`,
+        data: result,
+        total
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '服务器错误或者参数错误'
+      })
+    }
+  })()
+})
+
+router.post('/saveStudentInfo', (req, res) => {
+  const data = req.body
+  console.log(req)
+  if (!data.name) {
+    res.json({
+      code: -1,
+      msg: '名字不能为空'
+    })
+    return
+  }
+  if (!data.age) {
+    res.json({
+      code: -1,
+      msg: '年龄不能为空'
+    })
+    return
+  }
+  if (!data.sex) {
+    res.json({
+      code: -1,
+      msg: '性别不能为空'
+    })
+    return
+  }
+  if (!data.cardId) {
+    res.json({
+      code: -1,
+      msg: 'cardId不能为空'
+    })
+    return
+  }
+  if (!data.stuId) {
+    res.json({
+      code: -1,
+      msg: 'stuId不能为空'
+    })
+    return
+  }
+  (async function() {
+    try {
+      const cardIdResult = await smodel.querycardId(data.cardId)
+      if (cardIdResult.isExist) {
+        res.json({
+          code: -1,
+          msg: '该cardId已经存在，不能再录入'
+        })
+        return
+      }
+      await smodel.saveStudentInfo(data)
+      res.json({
+        code: 1,
+        msg: '录入成功'
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '参数错误或者服务器错误'
+      })
+    }
+  })()
+})
+
+router.post('/changeStudentInfo', (req, res) => {
+  const data = req.body
+  if (!data.name) {
+    res.json({
+      code: -1,
+      msg: '名字不能为空'
+    })
+    return
+  }
+  if (!data.age) {
+    res.json({
+      code: -1,
+      msg: '年龄不能为空'
+    })
+    return
+  }
+  if (!data.sex) {
+    res.json({
+      code: -1,
+      msg: '性别不能为空'
+    })
+    return
+  }
+  if (!data.cardId) {
+    res.json({
+      code: -1,
+      msg: 'cardId不能为空'
+    })
+    return
+  }
+  if (!data.stuId) {
+    res.json({
+      code: -1,
+      msg: 'stuId不能为空'
+    })
+    return
+  }
+  (async function() {
+    try {
+      const cardIdResult = await smodel.querycardId(data.cardId)
+      if (!cardIdResult.isExist) {
+        res.json({
+          code: -1,
+          msg: '该cardId不存在'
+        })
+        return
+      }
+      await smodel.changeStudentInfo(data)
+      res.json({
+        code: 1,
+        msg: `更改cardId为${data.cardId}信息成功`
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '参数错误或者服务器错误'
+      })
+    }
+  })()
+})
+
 module.exports = router
