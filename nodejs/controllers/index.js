@@ -13,6 +13,9 @@ router.use('/student', require('./student'))
 
 router.use('/treat', require('./treat'))
 
+// external
+router.use('/', require('./external'))
+
 router.get('/', (req, res) => {
   res.end('index')
 })

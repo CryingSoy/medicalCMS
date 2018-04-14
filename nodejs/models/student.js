@@ -60,7 +60,7 @@ exports.removeStudentInfo = cardId => {
 exports.changeStudentInfo = data => {
   return new Promise((resolve, reject) => {
     try {
-      const sqlcommand = `update studentInfo set name = '${data.name}', age = '${data.age}', sex = '${data.sex}', height = '${data.height || ''}', weight = '${data.weight || ''}', blood = '${data.blood || ''}', room = '${data.room || ''}', allergy = '${data.allergy || ''}', stuId = '${data.stuId}', depart = '${data.depart || ''}', phone = '${data.phone || ''}' where cardId = ${data.cardId}`
+      const sqlcommand = `update studentInfo set name = '${data.name}', age = '${data.age}', sex = '${data.sex}', height = '${data.height || ''}', weight = '${data.weight || ''}', blood = '${data.blood || ''}', room = '${data.room || ''}', allergy = '${data.allergy || ''}', stuId = '${data.stuId}', depart = '${data.depart || ''}', phone = '${data.phone || ''}' where cardId = '${data.cardId}'`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {
           reject(error)
