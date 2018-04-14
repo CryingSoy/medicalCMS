@@ -336,7 +336,7 @@ export default {
     }
   },
   created() {
-    getClassify()
+    getClassify('mClassify')
       .then(res => {
         if (res.data.code === 1) {
           this.options = JSON.parse(res.data.data)

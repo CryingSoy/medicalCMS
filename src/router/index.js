@@ -168,7 +168,7 @@ export const constantRouterMap = [
         path: 'disease',
         name: 'disease',
         component: () => import('@/views/dictionary/disease/index'),
-        meta: { title: '症状分类', icon: 'disease' }
+        meta: { title: '病情症状', icon: 'disease' }
       }
     ]
   },

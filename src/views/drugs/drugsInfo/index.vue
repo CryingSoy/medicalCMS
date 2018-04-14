@@ -424,7 +424,7 @@ export default {
   created() {
     // this.fetchAllData()
     this.fetchData()
-    getClassify()
+    getClassify('mClassify')
       .then(res => {
         if (res.data.code === 1) {
           this.optionsClass = JSON.parse(res.data.data)

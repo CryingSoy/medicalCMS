@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function getClassify() {
+export function getClassify(name) {
   return request({
     url: '/others/getOthersByName',
     method: 'get',
-    params: { name: 'mClassify' }
+    params: { name }
   })
 }
 
@@ -18,4 +18,3 @@ export function setClassify(name, content) {
     }
   })
 }
-

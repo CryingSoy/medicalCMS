@@ -14,6 +14,7 @@
       </div> -->
       <div class="custom-tree-container">
         <el-tree
+          default-expand-all
           :data="item"
           node-key="value"
           :expand-on-click-node="false"
@@ -38,7 +39,7 @@ export default {
     }
   },
   mounted() {
-    getClassify()
+    getClassify('mClassify')
       .then(res => {
         if (res.data.code === 1) {
           // console.log(res.data.data)
@@ -84,7 +85,7 @@ export default {
               type: 'success',
               message: `${note}：${value} 成功！`
             })
-            getClassify()
+            getClassify('mClassify')
           }
         })
     },

@@ -138,12 +138,21 @@
               <el-col style="padding-left:15px;" :span="3">
                 <el-dropdown @command="handleCommand">
                   <el-button type="primary" icon="el-icon-plus"></el-button>
+                  <el-cascader
+                    size="medium"
+                    placeholder="搜索"
+                    :options="options"
+                    @change="handleChange"
+                    v-model="diseaseSelect"
+                    style="width:10px; opacity:0; position: absolute; top:0"
+                    filterable
+                  ></el-cascader>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="感冒（上呼吸道感染）">感冒（上呼吸道感染）</el-dropdown-item>
+                    <!-- <el-dropdown-item command="感冒（上呼吸道感染）">感冒（上呼吸道感染）</el-dropdown-item>
                     <el-dropdown-item command="发烧">发烧</el-dropdown-item>
                     <el-dropdown-item command="头痛">头痛</el-dropdown-item>
                     <el-dropdown-item command="胃痛">胃痛</el-dropdown-item>
-                    <el-dropdown-item command="关节扭伤">关节扭伤</el-dropdown-item>
+                    <el-dropdown-item command="关节扭伤">关节扭伤</el-dropdown-item> -->
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-col>
@@ -487,6 +496,7 @@
 <script>
 import { getStudentInfo, saveStudentInfo, getTreatInfoByParams, saveTreatInfo } from '@/api/treat'
 import { getDrugsInfo } from '@/api/drugs'
+import { getClassify } from '@/api/other'
 import waves from '@/directive/waves' // 水波纹指令
 import { rfid } from '@/api/rfid'
 import store from '@/store'
@@ -498,6 +508,8 @@ export default {
   name: 'treat',
   data() {
     return {
+      diseaseSelect: [],
+      options: [],
       isFirst: true,
       inputVisible: false,
       inputValue: '',
@@ -651,6 +663,12 @@ export default {
     }
   },
   mounted() {
+    getClassify('mClassify')
+      .then(res => {
+        if (res.data.code === 1) {
+          this.options = JSON.parse(res.data.data)
+        }
+      })
     this.ruleForm.doctorName = store.getters.name
     if (!this.rfidreader.TryConnect()) {
       this.$alert('浏览器不支持，请更换浏览器后重试！', '提示', {
@@ -690,6 +708,9 @@ export default {
     })
   },
   methods: {
+    handleChange() {
+      this.ruleForm.disease = this.diseaseSelect[this.diseaseSelect.length - 1]
+    },
     handleInputConfirm() {
       const inputValue = this.inputValue
       if (inputValue) {
