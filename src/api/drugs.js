@@ -32,3 +32,14 @@ export function updateDrugsInfo(data) {
   })
 }
 
+export function getDrugsFlowByTime(st, et) {
+  return request({
+    url: '/drug/getDrugsFlowByTime',
+    method: 'get',
+    params: {
+      type: 'useTime',
+      startTime: st,
+      endTime: et
+    }
+  })
+}

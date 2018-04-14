@@ -141,7 +141,7 @@
                   <el-cascader
                     size="medium"
                     placeholder="搜索"
-                    :options="options"
+                    :options="optionsa"
                     @change="handleChange"
                     v-model="diseaseSelect"
                     style="width:10px; opacity:0; position: absolute; top:0"
@@ -375,7 +375,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="增加药品" :visible.sync="addDrugsFormVisible" width="80%">
+    <el-dialog title="选择药品" :visible.sync="addDrugsFormVisible" width="80%">
       <p>查询条件：
         <el-tag
           :key="tag.value"
@@ -480,7 +480,7 @@
         </el-table-column>
         <el-table-column align="center" label="操作" width="200px">
           <template slot-scope="scope">
-            <el-button type="primary" v-waves size="small" @click="handleSelect(scope.row)">添加</el-button>
+            <el-button type="primary" v-waves size="small" @click="handleSelect(scope.row)">选择</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -509,7 +509,7 @@ export default {
   data() {
     return {
       diseaseSelect: [],
-      options: [],
+      optionsa: [],
       isFirst: true,
       inputVisible: false,
       inputValue: '',
@@ -666,7 +666,7 @@ export default {
     getClassify('mClassify')
       .then(res => {
         if (res.data.code === 1) {
-          this.options = JSON.parse(res.data.data)
+          this.optionsa = JSON.parse(res.data.data)
         }
       })
     this.ruleForm.doctorName = store.getters.name

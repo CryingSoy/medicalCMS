@@ -126,7 +126,7 @@ export default {
           data: expectedData,
           animationDuration: 1800,
           animationEasing: 'cubicInOut'
-        },]
+        }]
       })
     },
     initChart() {

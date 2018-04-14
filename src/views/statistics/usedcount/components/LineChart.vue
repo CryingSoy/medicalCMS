@@ -27,6 +27,9 @@ export default {
     },
     chartData: {
       type: Object
+    },
+    xDate: {
+      type: Date
     }
   },
   data() {
@@ -69,6 +72,24 @@ export default {
       handler(val) {
         this.setOptions(val)
       }
+    },
+    xDate: {
+      deep: true,
+      handler(val) {
+        const a = [6, 5, 4, 3, 2, 1, 0]
+        const b = a.map(i => {
+          const c = new Date(+val - i * 86400000)
+          const d = c.getFullYear()
+          const e = c.getMonth()
+          const f = c.getDate()
+          return `${d}/${e + 1}/${f}`
+        })
+        this.chart.setOption({
+          xAxis: {
+            data: b
+          }
+        })
+      }
     }
   },
   methods: {
@@ -81,6 +102,7 @@ export default {
         const f = c.getDate()
         return `${d}/${e + 1}/${f}`
       })
+      // console.log(this.xDate)
       this.chart.setOption({
         xAxis: {
           data: b,
@@ -109,10 +131,10 @@ export default {
           }
         },
         legend: {
-          data: ['消耗数量']
+          data: ['expected', 'actual']
         },
         series: [{
-          name: '消耗数量', itemStyle: {
+          name: 'expected', itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -124,10 +146,29 @@ export default {
           smooth: true,
           type: 'line',
           data: expectedData,
-          animationDuration: 1800,
+          animationDuration: 2800,
           animationEasing: 'cubicInOut'
         },
-        ]
+        {
+          name: 'actual',
+          smooth: true,
+          type: 'line',
+          itemStyle: {
+            normal: {
+              color: '#3888fa',
+              lineStyle: {
+                color: '#3888fa',
+                width: 2
+              },
+              areaStyle: {
+                color: '#f3f8ff'
+              }
+            }
+          },
+          data: actualData,
+          animationDuration: 2800,
+          animationEasing: 'quadraticOut'
+        }]
       })
     },
     initChart() {

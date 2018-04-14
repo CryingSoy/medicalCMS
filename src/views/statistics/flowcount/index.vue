@@ -64,24 +64,24 @@ function v(i) {
   })
 }
 
-// (async function() {
-//   for (const i of b) {
-//     const c = await v(i)
-//     if (c.length) {
-//       let t = 0
-//       const mT = []
-//       for (const d of c) {
-//         t += parseInt(d.totalPrice)
-//         mT.push(d.totalPrice)
-//       }
-//       lineChartData.newVisitis.expectedData.push(t)
-//       lineChartData.newVisitis.actualData.push(Math.max.apply(null, mT))
-//     } else {
-//       lineChartData.newVisitis.expectedData.push(0)
-//       lineChartData.newVisitis.actualData.push(0)
-//     }
-//   }
-// })()
+(async function() {
+  for (const i of b) {
+    const c = await v(i)
+    if (c.length) {
+      let t = 0
+      const mT = []
+      for (const d of c) {
+        t += parseInt(d.totalPrice)
+        mT.push(d.totalPrice)
+      }
+      lineChartData.newVisitis.expectedData.push(t)
+      lineChartData.newVisitis.actualData.push(Math.max.apply(null, mT))
+    } else {
+      lineChartData.newVisitis.expectedData.push(0)
+      lineChartData.newVisitis.actualData.push(0)
+    }
+  }
+})()
 
 const lineChartData = {
   newVisitis: {
