@@ -1,4 +1,3 @@
-// 中间件 例如阻止用户未认证访问某些路由
 const user = require('../models/user')
 const auth = require('../models/auth')
 const jwt = require('jsonwebtoken')
@@ -6,9 +5,7 @@ const jwt = require('jsonwebtoken')
 module.exports = (req, res, next) => {
   (async function() {
     const authMap = await auth.getAuthTable()
-    const [adminMap, doctorMap, noNeedFilterMap] = authMap.map(e => {
-      return JSON.parse(e.authArr)
-    })
+    const [adminMap, doctorMap, noNeedFilterMap] = authMap.map(e => JSON.parse(e.authArr))
     adminMap.push('/auth/getAuthTable')
     noNeedFilterMap.push('/auth/setAuthTable')
     const _authMap = {
