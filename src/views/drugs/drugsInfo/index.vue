@@ -25,6 +25,7 @@
         size="small"
         @keyup.enter.native="handleInputConfirm"
       >
+      <!-- @keydown.native="barcodeIn" -->
       </el-input>
       <el-button v-else class="button-new-tag" size="small" @click="showInput">增加条件</el-button>
     </p>
@@ -430,8 +431,12 @@ export default {
           this.optionsClass = JSON.parse(res.data.data)
         }
       })
+    this.showInput()
   },
   methods: {
+    barcodeIn() {
+      console.log(1)
+    },
     handleSizeChange(val) {
       this.pageSize = val
       this.fetchData('', '', this.pageSize)

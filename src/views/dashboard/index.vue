@@ -2,7 +2,7 @@
   <div class=".dashboard-editor-container">
     <!-- <div class="dashboard-text">name:{{name}}</div>
     <div class="dashboard-text">roles:<span v-for='role in roles' :key='role'>{{role}}</span></div> -->
-    <panel-group style="padding:16px 16px 0;" @handleSetLineChartData="handleSetLineChartData"></panel-group>
+    <!-- <panel-group style="padding:16px 16px 0;" @handleSetLineChartData="handleSetLineChartData"></panel-group> -->
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData"></line-chart>
@@ -37,13 +37,7 @@ const b = a.map(z => {
 
 function v(i) {
   return new Promise((resolve, reject) => {
-    getTreatInfoByTime({
-      type: 'treatTime',
-      startTime: i.sT,
-      endTime: i.eT,
-      page: 1,
-      pageSize: i.eT
-    })
+    getTreatInfoByTime(i.sT, i.eT)
       .then(res => {
         if (res.data.code === 1) {
           resolve(res.data.data)
@@ -64,9 +58,11 @@ function v(i) {
       }
       lineChartData.newVisitis.expectedData.push(t)
       lineChartData.newVisitis.actualData.push(Math.max.apply(null, mT))
+      lineChartData.newVisitis.date = new Date()
     } else {
       lineChartData.newVisitis.expectedData.push(0)
       lineChartData.newVisitis.actualData.push(0)
+      lineChartData.newVisitis.date = new Date()
     }
   }
 })()

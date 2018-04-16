@@ -3,6 +3,7 @@ const mysql = require('../mysql')
 exports.saveDurgsInfo = data => {
   return new Promise((resolve, reject) => {
     try {
+      console.log(data.mBarcode)
       const sqlcommand = `insert into drugsInfo(mBarcode,mType,mClassify,factory,mUnit,mUseWay,mTreatment,mRemark,mBatch,mStock,mInPrice,mOutPrice,mProduceTime,mOverdueTime,inputer,mInTime,mName) value('${parseInt(data.mBarcode)}','${data.mType}','${data.mClassify}','${data.factory || ''}','${data.mUnit}','${data.mUseWay}','${data.mTreatment}','${data.mRemark || ''}','${data.mBatch}','${parseInt(data.mStock)}','${data.mInPrice}','${data.mOutPrice}','${data.mProduceTime}','${data.mOverdueTime}','${data.inputer}','${new Date().getTime()}','${data.mName}')`
       mysql.mysqlConnection.query(sqlcommand, (error, rows, fields) => {
         if (error) {

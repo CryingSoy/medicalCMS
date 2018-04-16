@@ -93,7 +93,7 @@ router.post('/saveTreatInfo', (req, res) => {
           mStock: e.num,
           useTotal: e.price,
           mark: `为${data.name}治疗`,
-          mName: e.name,
+          mName: e.mName,
           useTime: curTime
         })
       }

@@ -19,7 +19,7 @@
       </el-col>
     </el-row>
 
-    <el-dialog title="增加药品" :visible.sync="addDrugsFormVisible" width="80%">
+    <el-dialog title="查询药品" :visible.sync="addDrugsFormVisible" width="80%">
       <p>查询条件：
         <el-tag
           :key="tag.value"
@@ -249,6 +249,9 @@ export default {
       listLoading: false
     }
   },
+  mounted() {
+    this.selectDate(new Date(), 'all')
+  },
   methods: {
     pushArray(i) {
       return new Promise((resolve, reject) => {
@@ -339,7 +342,7 @@ export default {
           }
         })
     },
-    selectDate(date) {
+    selectDate(date, tag) {
       const a = [6, 5, 4, 3, 2, 1, 0]
       const b = a.map(z => {
         const c = new Date(+date - z * 86400000)
@@ -359,7 +362,7 @@ export default {
         }
       })
       
-      if (1) {
+      if (tag || this.selectName) {
         (async () => {
           this.listLoading = true
           for (const i of b) {

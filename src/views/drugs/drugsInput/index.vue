@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item" style="margin-left: 10px;" v-waves @click="addDrugsFormVisible = true" type="primary" icon="el-icon-edit">添加药品</el-button>
+      <!-- <el-button class="filter-item" style="margin-left: 10px;" v-waves @click="addDrugsFormVisible = true" type="primary" icon="el-icon-edit">添加药品</el-button> -->
     </div>
 
-    <el-table :data="list" ref="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
+    <!-- <el-table :data="list" ref="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column align="center" label='序号' width="95">
         <template slot-scope="scope">
           {{scope.$index}}
@@ -79,9 +79,9 @@
           <el-button type="danger" v-waves size="small" @click="removeClick(scope.row.username)">删除</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </el-table> -->
 
-    <el-dialog title="添加药品" :visible.sync="addDrugsFormVisible" width="50%">
+    <!-- <el-dialog title="添加药品" :visible.sync="addDrugsFormVisible" width="50%"> -->
       <el-form style="margin: 0 30px" :rules="addRules" :model="addDrugsForm" ref="addDrugsForm">
         <el-row>
           <el-col :span="12">
@@ -106,7 +106,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="9">
-            <el-form-item label="生产商家" label-width="100px">
+            <el-form-item prop="factory" label="生产商家" label-width="100px">
               <el-input v-model="addDrugsForm.factory" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
@@ -180,7 +180,7 @@
         </el-row>
 
         <el-row>
-          <el-col :span="11">
+          <el-col :span="12">
             <el-form-item prop="mProduceTime" label="生产日期" label-width="100px">
               <el-date-picker
                 v-model="addDrugsForm.mProduceTime"
@@ -189,7 +189,7 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="9">
             <el-form-item prop="mOverdueTime" label="有效日期" label-width="100px">
               <el-date-picker
                 v-model="addDrugsForm.mOverdueTime"
@@ -200,9 +200,8 @@
           </el-col>
         </el-row>
 
-        <el-form-item label="备注" label-width="100px">
+        <el-form-item label="备注" label-width="100px" style="width: 87.5%">
           <el-input
-            style="width: 91.7%"
             type="textarea"
             :rows="5"
             placeholder="请输入备注"
@@ -210,12 +209,14 @@
           </el-input>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="addDrugsFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="resetForm('addDrugsForm')">重 置</el-button>
-        <el-button type="primary" @click="submitForm('addDrugsForm')">确认添加</el-button>
-      </div>
-    </el-dialog>
+      <el-row>
+        <!-- <el-button @click="addDrugsFormVisible = false">取 消</el-button> -->
+        <el-col :span="12" :offset="10">
+          <el-button type="primary" @click="resetForm('addDrugsForm')">重 置</el-button>
+          <el-button type="primary" @click="submitForm('addDrugsForm')" icon="el-icon-edit">确认添加药品</el-button>
+        </el-col>
+      </el-row>
+    <!-- </el-dialog> -->
   </div>
 </template>
 
@@ -347,6 +348,7 @@ export default {
   methods: {
     resetForm(formName) {
       this.$refs[formName].resetFields()
+      this.addDrugsForm.factory = ''
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {

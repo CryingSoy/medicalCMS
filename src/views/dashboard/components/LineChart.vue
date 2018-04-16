@@ -27,6 +27,9 @@ export default {
     },
     chartData: {
       type: Object
+    },
+    xDate: {
+      type: Date
     }
   },
   data() {
@@ -69,18 +72,42 @@ export default {
       handler(val) {
         this.setOptions(val)
       }
+    },
+    xDate: {
+      deep: true,
+      handler(val) {
+        const a = [6, 5, 4, 3, 2, 1, 0]
+        const b = a.map(i => {
+          const c = new Date(+val - i * 86400000)
+          const d = c.getFullYear()
+          const e = c.getMonth()
+          const f = c.getDate()
+          return `${d}/${e + 1}/${f}`
+        })
+        this.chart.setOption({
+          xAxis: {
+            data: b,
+            boundaryGap: false,
+            axisTick: {
+              show: false
+            }
+          }
+        })
+      }
     }
   },
   methods: {
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ expectedData, actualData, date } = {}) {
       const a = [6, 5, 4, 3, 2, 1, 0]
-      const b = a.map(i => {
-        const c = new Date(+new Date() - i * 86400000)
+      let b = a.map(i => {
+        const c = new Date(+date - i * 86400000)
         const d = c.getFullYear()
         const e = c.getMonth()
         const f = c.getDate()
         return `${d}/${e + 1}/${f}`
       })
+      if (!date) b = []
+      // console.log(arguments)
       this.chart.setOption({
         xAxis: {
           data: b,
@@ -109,10 +136,10 @@ export default {
           }
         },
         legend: {
-          data: ['药物销售流水', '药品最高价格']
+          data: ['药品销售流水', '药品最高单价']
         },
         series: [{
-          name: '药物销售流水', itemStyle: {
+          name: '药品销售流水', itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -124,11 +151,11 @@ export default {
           smooth: true,
           type: 'line',
           data: expectedData,
-          animationDuration: 1800,
+          animationDuration: 2800,
           animationEasing: 'cubicInOut'
         },
         {
-          name: '药品最高价格',
+          name: '药品最高单价',
           smooth: true,
           type: 'line',
           itemStyle: {
@@ -144,7 +171,7 @@ export default {
             }
           },
           data: actualData,
-          animationDuration: 1800,
+          animationDuration: 2800,
           animationEasing: 'quadraticOut'
         }]
       })
