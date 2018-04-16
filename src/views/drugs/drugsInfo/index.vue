@@ -57,10 +57,10 @@
             <span>{{ props.row.mOutPrice }}</span>
           </el-form-item>
           <el-form-item label="生产日期">
-            <span>{{ props.row.mProduceTime }}</span>
+            <span>{{ formatTime(props.row.mProduceTime) }}</span>
           </el-form-item>
           <el-form-item label="有效期至">
-            <span>{{ props.row.mOverdueTime }}</span>
+            <span>{{ formatTime(props.row.mOverdueTime) }}</span>
           </el-form-item>
           <el-form-item label="备注">
             <span>{{ props.row.mRemark }}</span>
@@ -73,11 +73,11 @@
           {{scope.row.mBarcode}}
         </template>
       </el-table-column>
-      <el-table-column label="id">
+      <!-- <el-table-column label="id">
         <template slot-scope="scope">
           {{scope.row.id}}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="药品名字">
         <template slot-scope="scope">
           {{scope.row.mName}}
@@ -432,6 +432,13 @@ export default {
       })
   },
   methods: {
+    formatTime(date) {
+      const time = new Date(+date)
+      const year = time.getFullYear()
+      const mouth = time.getMonth() + 1
+      const day = time.getDate()
+      return `${year}年${mouth}月${day}日`
+    },
     handleSizeChange(val) {
       this.pageSize = val
       this.fetchData('', '', this.pageSize)

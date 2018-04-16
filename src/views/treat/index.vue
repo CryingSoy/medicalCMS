@@ -6,7 +6,7 @@
           <span>学生信息</span>
           <el-button style="float: right;" size="small" type="primary" @click="queryCardId" icon="el-icon-search">读卡</el-button>
           <el-button style="float: right; margin-right: 30px" size="small" type="primary" icon="el-icon-search" @click="queryStuId">查询学号</el-button>
-          <el-input style="float: right; width:200px;" size="small" placeholder="学号" v-model="_stuId"></el-input>
+          <el-input style="float: right; width:200px;" size="small" placeholder="学号" v-model="stuIds"></el-input>
         </div>
         <el-form v-loading="loading" :model="studentInfo" ref="studentInfo">
           <el-row>
@@ -207,10 +207,10 @@
                         <span>{{ props.row.mInPrice }}</span>
                       </el-form-item>
                       <el-form-item label="生产日期">
-                        <span>{{ props.row.mProduceTime }}</span>
+                        <span>{{  formatTime(props.row.mProduceTime) }}</span>
                       </el-form-item>
                       <el-form-item label="有效期至">
-                        <span>{{ props.row.mOverdueTime }}</span>
+                        <span>{{ formatTime(props.row.mOverdueTime) }}</span>
                       </el-form-item>
                       <el-form-item label="备注">
                         <span>{{ props.row.mRemark }}</span>
@@ -380,7 +380,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="选择药品" :visible.sync="addDrugsFormVisible" width="80%">
+    <el-dialog title="选择药品" :visible.sync="addDrugsFormVisible" width="80%" @close="clearDrugs">
       <p>查询条件：
         <el-tag
           :key="tag.value"
@@ -404,6 +404,7 @@
           v-model="inputValue"
           ref="saveTagInput"
           size="small"
+          style="width: 150px"
           @keyup.enter.native="handleInputConfirm"
         >
         </el-input>
@@ -437,10 +438,10 @@
               <span>{{ props.row.mOutPrice }}</span>
             </el-form-item>
             <el-form-item label="生产日期">
-              <span>{{ props.row.mProduceTime }}</span>
+              <span>{{ formatTime(props.row.mProduceTime) }}</span>
             </el-form-item>
             <el-form-item label="有效期至">
-              <span>{{ props.row.mOverdueTime }}</span>
+              <span>{{ formatTime(props.row.mOverdueTime) }}</span>
             </el-form-item>
             <el-form-item label="备注">
               <span>{{ props.row.mRemark }}</span>
@@ -519,7 +520,7 @@ export default {
       inputVisible: false,
       inputValue: '',
       selectValue: 'mBarcode',
-      _stuId: '',
+      stuIds: '',
       options: [
         {
           value: 'mBarcode',
@@ -714,8 +715,15 @@ export default {
     })
   },
   methods: {
-    addRest() {
-
+    clearDrugs() {
+      this.dynamicTags = []
+    },
+    formatTime(date) {
+      const time = new Date(+date)
+      const year = time.getFullYear()
+      const mouth = time.getMonth() + 1
+      const day = time.getDate()
+      return `${year}年${mouth}月${day}日`
     },
     handleChange() {
       this.ruleForm.disease = this.diseaseSelect[this.diseaseSelect.length - 1]
@@ -762,6 +770,7 @@ export default {
     fetchData(edit, page, pageSize) {
       this.addlistLoading = true
       this.addDrugsFormVisible = true
+      this.showInput()
       const a = []
       this.dynamicTags.map(item => {
         a.push({
@@ -828,7 +837,7 @@ export default {
     },
     queryStuId() {
       getStudentInfoByParams({
-        params: JSON.stringify([{ name: 'stuId', word: this._stuId }])
+        params: JSON.stringify([{ name: 'stuId', word: this.stuIds }])
       })
         .then(res => {
           if (res.status === 200) {
