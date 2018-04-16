@@ -20,8 +20,11 @@ export function getInfo(token) {
 }
 
 export function logout() {
-  return request({
-    url: '/user/logout',
-    method: 'post'
+  // return request({
+  //   url: '/user/logout',
+  //   method: 'post'
+  // })
+  return new Promise((resolve, reject) => {
+    resolve()
   })
 }
