@@ -670,7 +670,7 @@ export default {
     }
   },
   mounted() {
-    getClassify('mClassify')
+    getClassify('disease')
       .then(res => {
         if (res.data.code === 1) {
           this.optionsa = JSON.parse(res.data.data)

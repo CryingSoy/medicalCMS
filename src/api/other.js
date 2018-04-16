@@ -18,3 +18,15 @@ export function setClassify(name, content) {
     }
   })
 }
+
+export function getDrugsDetail(barcode) {
+  return request({
+    url: 'http://api.jisuapi.com/barcode2/query',
+    method: 'get',
+    params: { 
+      appkey: '2d6897693df6271d',
+      barcode
+     }
+  })
+}
+

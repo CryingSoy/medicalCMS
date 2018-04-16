@@ -86,7 +86,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item prop="mBarcode" label="条形码" label-width="100px">
-              <el-input v-model.number="addDrugsForm.mBarcode" auto-complete="off"></el-input>
+              <el-input @keyup.enter.native="searchInfo" v-model.number="addDrugsForm.mBarcode" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="9">
@@ -224,7 +224,7 @@
 // import { getList, resetPassword, removeUser, addUser } from '@/api/user'
 import waves from '@/directive/waves' // 水波纹指令
 import MdInput from '@/components/MDinput'
-import { getClassify } from '@/api/other'
+import { getClassify, getDrugsDetail } from '@/api/other'
 import { saveDrugsInfo } from '@/api/drugs'
 import store from '@/store'
 
@@ -346,6 +346,23 @@ export default {
     this.fetchData()
   },
   methods: {
+    searchInfo() {
+      getDrugsDetail(this.addDrugsForm.mBarcode)
+        .then(res => {
+          if (res.status === 200) {
+            if (res.data.status === '0') {
+              const result = res.data.result
+              this.addDrugsForm.mName = result.name
+              this.addDrugsForm.factory = result.company
+            } else {
+              this.$notify.info({
+                title: '提示',
+                message: res.data.msg,
+              });
+            }
+          }
+        })
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.addDrugsForm.factory = ''
