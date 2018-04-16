@@ -27,6 +27,9 @@ export default {
     },
     chartData: {
       type: Object
+    },
+    xDate: {
+      type: Date
     }
   },
   data() {
@@ -69,18 +72,42 @@ export default {
       handler(val) {
         this.setOptions(val)
       }
+    },
+    xDate: {
+      deep: true,
+      handler(val) {
+        const a = [6, 5, 4, 3, 2, 1, 0]
+        const b = a.map(i => {
+          const c = new Date(+val - i * 86400000)
+          const d = c.getFullYear()
+          const e = c.getMonth()
+          const f = c.getDate()
+          return `${d}/${e + 1}/${f}`
+        })
+        this.chart.setOption({
+          xAxis: {
+            data: b,
+            boundaryGap: false,
+            axisTick: {
+              show: false
+            }
+          }
+        })
+      }
     }
   },
   methods: {
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ expectedData, date } = {}) {
       const a = [6, 5, 4, 3, 2, 1, 0]
-      const b = a.map(i => {
-        const c = new Date(+new Date() - i * 86400000)
+      let b = a.map(i => {
+        const c = new Date(+date - i * 86400000)
         const d = c.getFullYear()
         const e = c.getMonth()
         const f = c.getDate()
         return `${d}/${e + 1}/${f}`
       })
+      if (!date) b = []
+      // console.log(arguments)
       this.chart.setOption({
         xAxis: {
           data: b,
@@ -124,9 +151,9 @@ export default {
           smooth: true,
           type: 'line',
           data: expectedData,
-          animationDuration: 1800,
+          animationDuration: 2800,
           animationEasing: 'cubicInOut'
-        },]
+        }]
       })
     },
     initChart() {

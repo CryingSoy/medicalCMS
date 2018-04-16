@@ -40,11 +40,15 @@ export function saveTreatInfo(data) {
   })
 }
 
-export function getTreatInfoByTime(params) {
+export function getTreatInfoByTime(st, et) {
   return request({
     url: '/treat/getTreatInfoByTime',
     method: 'get',
-    params
+    params: {
+      type: 'treatTime',
+      startTime: st,
+      endTime: et
+    }
   })
 }
 
