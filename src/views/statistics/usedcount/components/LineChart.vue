@@ -86,23 +86,28 @@ export default {
         })
         this.chart.setOption({
           xAxis: {
-            data: b
+            data: b,
+            boundaryGap: false,
+            axisTick: {
+              show: false
+            }
           }
         })
       }
     }
   },
   methods: {
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ expectedData, date } = {}) {
       const a = [6, 5, 4, 3, 2, 1, 0]
-      const b = a.map(i => {
-        const c = new Date(+new Date() - i * 86400000)
+      let b = a.map(i => {
+        const c = new Date(+date - i * 86400000)
         const d = c.getFullYear()
         const e = c.getMonth()
         const f = c.getDate()
         return `${d}/${e + 1}/${f}`
       })
-      // console.log(this.xDate)
+      if (!date) b = []
+      // console.log(arguments)
       this.chart.setOption({
         xAxis: {
           data: b,
@@ -131,10 +136,10 @@ export default {
           }
         },
         legend: {
-          data: ['expected', 'actual']
+          data: ['消耗数量']
         },
         series: [{
-          name: 'expected', itemStyle: {
+          name: '消耗数量', itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -148,26 +153,6 @@ export default {
           data: expectedData,
           animationDuration: 2800,
           animationEasing: 'cubicInOut'
-        },
-        {
-          name: 'actual',
-          smooth: true,
-          type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#3888fa',
-              lineStyle: {
-                color: '#3888fa',
-                width: 2
-              },
-              areaStyle: {
-                color: '#f3f8ff'
-              }
-            }
-          },
-          data: actualData,
-          animationDuration: 2800,
-          animationEasing: 'quadraticOut'
         }]
       })
     },

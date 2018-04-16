@@ -104,23 +104,23 @@ export default {
                 this.$set(data, 'children', [])
               }
               data.children.push(newChild)
-              this.changeClassify('添加分类', value)
+              this.changeClassify('添加症状', value)
             } else {
               this.$message({
                 type: 'error',
-                message: '分类名称已存在'
+                message: '症状名称已存在'
               })
             }
           } else {
             this.$message({
               type: 'info',
-              message: '分类名称不能包含空格'
+              message: '症状名称不能包含空格'
             })
           }
         } else {
           this.$message({
             type: 'info',
-            message: '未输入分类名称'
+            message: '未输入症状名称'
           })
         }
       }).catch(() => {
@@ -142,17 +142,17 @@ export default {
           if (value.indexOf(' ') < 0) {
             children[index].label = value
             children[index].value = value
-            this.changeClassify('修改分类名称', value)
+            this.changeClassify('修改症状名称', value)
           } else {
             this.$message({
               type: 'info',
-              message: '分类名称不能包含空格'
+              message: '症状名称不能包含空格'
             })
           }
         } else {
           this.$message({
             type: 'info',
-            message: '未输入分类名称'
+            message: '未输入症状名称'
           })
         }
       }).catch(() => {
@@ -166,14 +166,14 @@ export default {
       const parent = node.parent
       const children = parent.data.children || parent.data
       const index = children.findIndex(d => d.value === data.value)
-      this.$confirm(`此操作将永久删除分类：${children[index].label}，是否继续？`, '提示', {
+      this.$confirm(`此操作将永久删除症状：${children[index].label}，是否继续？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         const note = children[index].label
         children.splice(index, 1)
-        this.changeClassify('删除分类', note)
+        this.changeClassify('删除症状', note)
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -209,23 +209,23 @@ export default {
             this.eachC(this.classify, value)
             if (!this.isSame) {
               this.classify.push([{ label: value, value }])
-              this.changeClassify('添加分类', value)
+              this.changeClassify('添加症状', value)
             } else {
               this.$message({
                 type: 'error',
-                message: '分类名称已存在'
+                message: '症状名称已存在'
               })
             }
           } else {
             this.$message({
               type: 'info',
-              message: '分类名称不能包含空格'
+              message: '症状名称不能包含空格'
             })
           }
         } else {
           this.$message({
             type: 'info',
-            message: '未输入分类名称'
+            message: '未输入症状名称'
           })
         }
       }).catch(() => {

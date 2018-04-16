@@ -10,6 +10,7 @@
           v-model="date"
           type="date"
           @change="selectDate"
+          :clearable="false"
           placeholder="选择日期">
         </el-date-picker>
         <span v-show="selectV" style="margin-left: 15px">
@@ -140,7 +141,8 @@
       </div>
     </el-dialog>
 
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+    <el-row v-loading="listLoading" element-loading-text="数据获取中"
+    element-loading-spinner="el-icon-loading" style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :xDate="xDate" :chart-data="lineChartData"></line-chart>
     </el-row>
   </div>
@@ -153,65 +155,11 @@ import { getTreatInfoByTime } from '@/api/treat'
 import LineChart from './components/LineChart'
 import waves from '@/directive/waves' // 水波纹指令
 
-const a = [6, 5, 4, 3, 2, 1, 0]
-const b = a.map(z => {
-  const c = new Date(+new Date() - z * 86400000)
-  const d = c.getHours() * 60 * 60 * 1000
-  const e = c.getMinutes() * 60 * 1000
-  const f = c.getSeconds() * 1000
-  const g = c.getMilliseconds()
-  const h = d + e + f + g
-  const i = (23 - c.getHours()) * 60 * 60 * 1000
-  const j = (59 - c.getMinutes()) * 60 * 1000
-  const k = (59 - c.getSeconds()) * 1000
-  const l = 1000 - c.getMilliseconds()
-  const m = i + j + k + l
-  return {
-    sT: +c - h,
-    eT: +c + m
-  }
-})
-
-function v(i) {
-  return new Promise((resolve, reject) => {
-    getTreatInfoByTime({
-      type: 'treatTime',
-      startTime: i.sT,
-      endTime: i.eT,
-      page: 1,
-      pageSize: i.eT
-    })
-      .then(res => {
-        if (res.data.code === 1) {
-          resolve(res.data.data)
-        }
-      })
-  })
-}
-
-(async function() {
-  for (const i of b) {
-    const c = await v(i)
-    if (c.length) {
-      let t = 0
-      const mT = []
-      for (const d of c) {
-        t += parseInt(d.totalPrice)
-        mT.push(d.totalPrice)
-      }
-      lineChartData.newVisitis.expectedData.push(t)
-      // lineChartData.newVisitis.actualData.push(Math.max.apply(null, mT))
-    } else {
-      lineChartData.newVisitis.expectedData.push(0)
-      // lineChartData.newVisitis.actualData.push(0)
-    }
-  }
-})()
-
 const lineChartData = {
   newVisitis: {
     expectedData: []
-  }
+  },
+  date: 1233
 }
 
 export default {
@@ -302,16 +250,28 @@ export default {
       addDrugsFormVisible: false,
       lineChartData: lineChartData.newVisitis,
       date: null,
-      xDate: null
+      xDate: null,
+      xArray: [],
+      listLoading: false
     }
   },
   methods: {
+    pushArray(i) {
+      return new Promise((resolve, reject) => {
+        getDrugsFlowByTime(i.sT, i.eT)
+          .then(res => {
+            if (res.data.code === 1) {
+              resolve(res.data.data)
+            }
+          })
+      })
+    },
     handleSelect(item) {
       this.addDrugsFormVisible = false
       this.selectV = true
       this.selectName = item.mName
-      if(this.date) {
-        console.log('ok')
+      if (this.date) {
+        this.selectDate(this.date)
       }
     },
     handleInputConfirm() {
@@ -404,16 +364,32 @@ export default {
           eT: +c + m
         }
       })
-      if(this.selectName) {
-        console.log('ok')
-      }
-      getDrugsFlowByTime(b[0].sT, b[0].eT)
-        .then(res => {
-          if (res.data.code === 1) {
-            console.log(res.data.data)
+      
+      if (this.selectName) {
+        (async () => {
+          this.listLoading = true
+          for (const i of b) {
+            const c = await this.pushArray(i)
+            if (c.length) {
+              let tol = 0
+              for (const i of c) {
+                if (this.selectName === i.mName) {
+                  tol += parseInt(i.useNum)
+                }
+              }
+              this.xArray.push(tol)
+            } else {
+              this.xArray.push(0)
+            }
           }
-        })
-      this.xDate = date
+          this.listLoading = false
+          lineChartData.newVisitis.expectedData = this.xArray
+          lineChartData.newVisitis.date = date
+          // this.xDate = date
+          this.xArray = []
+        })()
+      }
+      // this.xDate = date
     },
     handleSetLineChartData(type) {
       this.lineChartData = lineChartData[type]
