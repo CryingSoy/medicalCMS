@@ -717,6 +717,7 @@ export default {
   methods: {
     clearDrugs() {
       this.dynamicTags = []
+      this.selectValue = 'mBarcode'
     },
     formatTime(date) {
       const time = new Date(+date)

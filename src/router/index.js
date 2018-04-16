@@ -50,14 +50,25 @@ export const constantRouterMap = [
     }]
   },
 
+  // {
+  //   path: '/test',
+  //   component: Layout,
+  //   children: [{
+  //     path: 'index',
+  //     name: 'test',
+  //     component: () => import('@/views/test/index'),
+  //     meta: { title: '测试（开发）', icon: '404' }
+  //   }]
+  // },
+
   {
-    path: '/test',
+    path: '/permission',
     component: Layout,
     children: [{
       path: 'index',
-      name: 'test',
-      component: () => import('@/views/test/index'),
-      meta: { title: '测试（开发）', icon: '404' }
+      name: 'permission',
+      component: () => import('@/views/permission/index'),
+      meta: { title: '权限管理', icon: 'component' }
     }]
   },
 
