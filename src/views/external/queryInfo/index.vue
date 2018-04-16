@@ -11,6 +11,7 @@
     </header>
     <main>
       <div v-if="type === 'student'">
+        <h2 v-show="showTips">暂无个人信息和就诊记录，请先完成第一次就诊。</h2>
         <el-tabs class="mt50" type="border-card">
           <el-tab-pane label="个人信息" class="tx">
             <el-table
@@ -30,7 +31,7 @@
               >
               </el-table-column>
             </el-table>
-            <el-button class="mt20" type="primary" @click="changeStudentInfo">更改个人信息</el-button>
+            <el-button class="mt20" type="primary" :disabled="showTips" @click="changeStudentInfo">更改个人信息</el-button>
           </el-tab-pane>
           <el-tab-pane label="历史就诊记录">
               <el-table
@@ -102,7 +103,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <div v-else>loading</div>
+      <div v-else style="text-align: center; margin-top: 40px; font-size:24px;">loading...</div>
     </main>
 
     <el-dialog title="更改个人信息" center :visible.sync="studentDialogVisible" width="40%">
@@ -197,6 +198,7 @@ export default {
       username: '',
 
       studentInfo: [],
+      showTips: false,
 
       studentDialogVisible: false,
 
@@ -250,6 +252,8 @@ export default {
               if (data.length > 0) {
                 this.studentInfo = data[0]
                 this.sDialogForm = { ...this.studentInfo }
+              } else {
+                this.showTips = true
               }
               this.getUserTreatInfo()
             } else {
