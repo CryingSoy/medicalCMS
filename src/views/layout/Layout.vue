@@ -5,10 +5,12 @@
       <navbar></navbar>
       <app-main></app-main>
     </div>
+    <Drugs></Drugs>
   </div>
 </template>
 
 <script>
+import Drugs from '@/views/layout/components/Drugs'
 import { Navbar, Sidebar, AppMain } from '@/views/layout/components'
 import { getClassify } from '@/api/other'
 import { mapGetters } from 'vuex'
@@ -37,7 +39,8 @@ export default {
   components: {
     Navbar,
     Sidebar,
-    AppMain
+    AppMain,
+    Drugs
   },
   data() {
     return {
