@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" :placeholder="'用户名'" v-model="listQuery.username">
+      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" :placeholder="'用户名'" v-model="username">
       </el-input>
-      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" :placeholder="'姓名'" v-model="listQuery.author">
-      </el-input>
-      <el-select clearable style="width: 90px" v-model="listQuery.status" class="filter-item" :placeholder="'状态'">
+      <!-- <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" :placeholder="'姓名'" v-model="listQuery.author">
+      </el-input> -->
+      <!-- <el-select clearable style="width: 90px" v-model="listQuery.status" class="filter-item" :placeholder="'状态'">
         <el-option v-for="item in statusList" :key="item" :label="labelCreator(item)" :value="item">
       </el-option>
-      </el-select>
+      </el-select> -->
       <!-- <el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.type" :placeholder="$t('table.type')">
         <el-option v-for="item in  calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key">
         </el-option>
@@ -18,7 +18,7 @@
         </el-option>
       </el-select> -->
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" v-waves icon="el-icon-search" @click="handleFilter">搜索</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" v-waves @click="handleCreate" type="primary" icon="el-icon-edit">添加</el-button>
+      <!-- <el-button class="filter-item" style="margin-left: 10px;" v-waves @click="handleCreate" type="primary" icon="el-icon-edit">添加</el-button> -->
       <!-- <el-button class="filter-item" type="primary" :loading="downloadLoading" v-waves icon="el-icon-download" @click="handleDownload">{{$t('table.export')}}</el-button>
       <el-checkbox class="filter-item" style='margin-left:15px;' @change='tableKey=tableKey+1' v-model="showReviewer">{{$t('table.reviewer')}}</el-checkbox> -->
     </div>
@@ -34,27 +34,21 @@
           {{scope.row.username}}
         </template>
       </el-table-column>
-      <el-table-column label="姓名" width="70" align="center">
-        <template slot-scope="scope">
-          <span>{{scope.row.name}}</span>
-        </template>
-      </el-table-column>
       <el-table-column align="center" label="最后一次登录时间" >
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
-          <span>{{scope.row.updatetime}}</span>
+          <span>{{scope.row.lastUpdateTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="注册时间" >
+      <el-table-column align="center" label="类型" >
         <template slot-scope="scope">
-          <i class="el-icon-time"></i>
-          <span>{{scope.row.firsttime}}</span>
+          <span>学生</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作" >
         <template slot-scope="scope">
           <el-button type="primary" v-waves size="small" @click="resetClick(scope.row.username)">重置密码</el-button>
-          <el-button type="danger" v-waves size="small">删除</el-button>
+          <!-- <el-button type="danger" v-waves size="small">删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -87,7 +81,7 @@
 </template>
 
 <script>
-import { getList, resetPassword } from '@/api/user'
+import { getList, resetPassword, getUserLists, resetPasswords } from '@/api/user'
 import waves from '@/directive/waves' // 水波纹指令
 import MdInput from '@/components/MDinput'
 
@@ -113,7 +107,8 @@ export default {
         status: '',
         page: 1,
         limit: 20
-      }
+      },
+      username: ''
     }
   },
   components: {
@@ -140,7 +135,10 @@ export default {
           type: 'warning'
         })
       } else {
-        resetPassword(this.resetPasswordForm.username, this.resetPasswordForm.password, 'userInfo')
+        resetPasswords({
+          username: this.resetPasswordForm.username,
+          password: this.resetPasswordForm.password
+        })
           .then(res => {
             this.$message({
               type: 'success',
@@ -173,57 +171,59 @@ export default {
       this.passwordTipsVis = false
       this.resetPasswordForm.username = item
     },
-    labelCreator(label) {
-      switch (label) {
-        case 1: return '坐诊中'
-        case 2: return '休息中'
-        case 3: return '下班了'
-        case 12: return '坐诊中和休息中'
-      }
-    },
+    // labelCreator(label) {
+    //   switch (label) {
+    //     case 1: return '坐诊中'
+    //     case 2: return '休息中'
+    //     case 3: return '下班了'
+    //     case 12: return '坐诊中和休息中'
+    //   }
+    // },
     handleCreate() {
       console.log('1')
     },
     handleFilter() {
-      // let del
-      // let queryList = this.list.map((item, value) => {
-      //   if (item.username.indexOf(this.listQuery.username) >= 0) {
-      //     if (this.listQuery.author === '') {
-      //       return item
-      //     } else if (item.author.indexOf(this.listQuery.author) >= 0) {
-      //       return item
-      //     }
-      //   }
-      //   if (item.author.indexOf(this.listQuery.author) >= 0) {
-      //     if (this.listQuery.username === '') {
-      //       return item
-      //     } else if (item.username.indexOf(this.listQuery.username) >= 0) {
-      //       return item
-      //     }
-      //   }
-      //   del.push(value)
-      // })
-      // console.log(queryList)
+      this.listLoading = true
+      if (!this.username) {
+        this.fetchData()
+        return
+      }
+      getUserLists({
+        params: JSON.stringify([{ name: 'username', word: this.username }, { name: 'type', word: 'student' }])
+      })
+        .then(res => {
+          this.list = res.data.data
+          this.listLoading = false
+          this.TimeCalculator(this.list)
+        })
     },
     fetchData() {
-      this.listLoading = true
-      getList('student').then(response => {
-        this.list = response.data.data
-        this.listLoading = false
-        this.TimeCalculator(this.list)
+      // this.listLoading = true
+      // getList('student').then(response => {
+      //   this.list = response.data.data
+      //   this.listLoading = false
+      //   this.TimeCalculator(this.list)
+      // })
+      getUserLists({
+        params: JSON.stringify([{ name: 'type', word: 'student' }])
       })
+        .then(res => {
+          this.list = res.data.data
+          this.listLoading = false
+          this.TimeCalculator(this.list)
+        })
     },
     TimeCalculator(list) {
       list.map(item => {
-        if (item.hasOwnProperty('updatetime')) {
-          const time = new Date(item.updatetime)
+        if (item.hasOwnProperty('lastUpdateTime')) {
+          const time = new Date(item.lastUpdateTime)
           const year = time.getFullYear()
           const mouth = time.getMonth() + 1
           const day = time.getDate()
           const hour = time.getHours()
           const minutes = time.getMinutes()
           const second = time.getSeconds()
-          item.updatetime = `${year}年${mouth}月${day}日${hour}时${minutes}分${second}秒`
+          item.lastUpdateTime = `${year}年${mouth}月${day}日${hour}时${minutes}分${second}秒`
         }
         if (item.hasOwnProperty('firsttime')) {
           const time = new Date(item.firsttime)
@@ -234,20 +234,6 @@ export default {
           const minutes = time.getMinutes()
           const second = time.getSeconds()
           item.firsttime = `${year}年${mouth}月${day}日${hour}时${minutes}分${second}秒`
-        }
-        if (item.hasOwnProperty('status')) {
-          if (item.status === 1) {
-            item.status = '坐诊中'
-          }
-          if (item.status === 2) {
-            item.status = '休息中'
-          }
-          if (item.status === 3) {
-            item.status = '下班了'
-          }
-          if (item.status === 12) {
-            item.status = '坐诊中和休息中'
-          }
         }
         return item
       })

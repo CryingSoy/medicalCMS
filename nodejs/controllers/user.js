@@ -347,4 +347,138 @@ router.post('/resetPassword', (req, res) => {
   }
 })
 
+router.get('/getUserListByParams', (req, res) => {
+  const data = req.query
+  if (!data.params) {
+    (async function() {
+      try {
+        const result = await user.getUserListAll(data)
+        const total = await user.getUserListAllTotal(data)
+        res.json({
+          code: 1,
+          msg: `查询成功，共查到${result.length}条数据`,
+          data: result,
+          total
+        })
+      } catch (error) {
+        console.log(error)
+        res.json({
+          code: -1,
+          msg: '服务器错误'
+        })
+      }
+    })()
+  } else {
+    (async function() {
+      try {
+        const result = await user.getUserListByParams(JSON.parse(data.params), data)
+        const total = await user.getUserListByParamsTotal(JSON.parse(data.params), data)
+        res.json({
+          code: 1,
+          msg: `查询成功，共查到${result.length}条数据`,
+          data: result,
+          total
+        })
+      } catch (error) {
+        console.log(error)
+        res.json({
+          code: -1,
+          msg: '服务器错误'
+        })
+      }
+    })()
+  }
+})
+
+router.post('/resetPasswords', (req, res) => {
+  const data = req.body
+  if (!data.username) {
+    res.json({
+      code: -1,
+      msg: '用户名为空'
+    })
+    return
+  }
+  if (!data.password) {
+    res.json({
+      code: -1,
+      msg: '密码为空'
+    })
+    return
+  }
+  if (data.password.length < 6 || data.password.length > 16) {
+    res.json({
+      code: -1,
+      msg: '密码长度必须是6到16'
+    })
+    return
+  }
+  (async function() {
+    try {
+      if (await user.queryUsernameE(data.username)) {
+        res.json({
+          code: -1,
+          msg: '用户名不存在'
+        })
+        return
+      }
+      data.password = utils.changeWithMD5(data.password)
+      await user.resetPassword(data)
+      res.json({
+        code: 1,
+        msg: `${data.username}密码修改成功`
+      })
+    } catch (error) {
+      console.log(error)
+      res.json({
+        code: -1,
+        msg: '服务器错误'
+      })
+    }
+  })()
+})
+
+router.get('/getAdminUserListByParams', (req, res) => {
+  const data = req.query
+  if (!data.params) {
+    (async function() {
+      try {
+        const result = await user.getAdminUserListAll(data)
+        const total = await user.getAdminUserListAllTotal(data)
+        res.json({
+          code: 1,
+          msg: `查询成功，共查到${result.length}条数据`,
+          data: result,
+          total
+        })
+      } catch (error) {
+        console.log(error)
+        res.json({
+          code: -1,
+          msg: '服务器错误'
+        })
+      }
+    })()
+  } else {
+    (async function() {
+      try {
+        const result = await user.getAdminUserListByParams(JSON.parse(data.params), data)
+        const total = await user.getAdminUserListByParamsTotal(JSON.parse(data.params), data)
+        res.json({
+          code: 1,
+          msg: `查询成功，共查到${result.length}条数据`,
+          data: result,
+          total
+        })
+      } catch (error) {
+        console.log(error)
+        res.json({
+          code: -1,
+          msg: '服务器错误'
+        })
+      }
+    })()
+  }
+})
+
 module.exports = router

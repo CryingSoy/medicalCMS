@@ -15,7 +15,7 @@
         </el-form-item>
       </el-form>
     </main>
-    
+
     <el-dialog title="提示" :modal-append-to-body="false" :visible="showTips" center width="400px" :before-close="closeSetPwd">
       <h3>检测到您的密码是默认密码，请改更密码</h3>
       <el-form :model="resetPwdForm" :rules="rRules" aria-label="100px" ref="resetPwdForm">
@@ -70,11 +70,13 @@ export default {
             .then(res => {
               if (res.status === 200) {
                 if (res.data.code === 1) {
-                  if (this.loginForm.password === '123456' || this.loginForm.password === '000000') {
-                    this.showTips = true
-                  }
                   const { token } = res.data
                   window.localStorage.setItem('siseToken', token)
+                  if (this.loginForm.password === '123456' || this.loginForm.password === '000000') {
+                    this.showTips = true
+                  } else {
+                    this.$router.push({ path: '/queryInfo' })
+                  }
                 } else {
                   this.$message.error(res.data.msg)
                 }
