@@ -73,7 +73,10 @@
         </el-table-column>
       </el-table>
     </el-popover>
-    <el-button v-popover:popover1 type="danger">有{{list.length}}种药快要过期</el-button>
+    <div v-show="ps">
+      <el-button v-popover:popover1 type="danger">有{{list.length}}种药快要过期</el-button>
+      <i @click="ps = false" class="el-icon-error" style="cursor: pointer;color: white;border: 1px solid rgba(0, 0, 0, 0.4); border-radius: 50%;position: absolute; top: -5px; right: -5px;"></i>
+    </div>
   </div>
 </template>
 
@@ -82,7 +85,9 @@ import { getOverdueByDay } from '@/api/drugs'
 export default {
   data() {
     return {
-      list: []
+      list: [],
+      message: '有{{list.length}}种药快要过期',
+      ps: true
     }
   },
   methods: {
