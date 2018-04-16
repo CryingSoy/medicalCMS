@@ -12,6 +12,7 @@
       <el-select class="select-tag" size="small" v-if="inputVisible" v-model="selectValue" placeholder="请选择">
         <el-option
           v-for="item in options"
+          v-show="!item.hidden"
           :key="item.value"
           :label="item.label"
           :value="item.value">
@@ -352,59 +353,73 @@ export default {
       options: [
         {
           value: 'mBarcode',
-          label: '条形码'
+          label: '条形码',
+          hidden: false
         },
         {
           value: 'id',
-          label: 'id'
+          label: 'id',
+          hidden: false
         },
         {
           value: 'mName',
-          label: '药品名称'
+          label: '药品名称',
+          hidden: false
         },
         {
           value: 'mType',
-          label: '药品类型'
+          label: '药品类型',
+          hidden: false
         },
         {
           value: 'mClassify',
-          label: '归属分类'
+          label: '归属分类',
+          hidden: false
         },
         {
           value: 'factory',
-          label: '生产厂家'
+          label: '生产厂家',
+          hidden: false
         },
         {
           value: 'mUnit',
-          label: '药品规格'
+          label: '药品规格',
+          hidden: false
         },
         {
           value: 'mUseWay',
-          label: '用药方式'
+          label: '用药方式',
+          hidden: false
         },
         {
           value: 'mTreatment',
-          label: '用药疗程'
+          label: '用药疗程',
+          hidden: false
         },
         {
           value: 'mRemark',
-          label: '备注'
+          label: '备注',
+          hidden: false
         },
         {
           value: 'mBatch',
-          label: '批号'
+          label: '批号',
+          hidden: false
         },
         {
           value: 'mStock',
-          label: '库存量'
+          label: '库存量',
+          hidden: false
         },
         {
           value: 'mInPrice',
-          label: '进货价'
+          label: '进货价',
+          hidden: false
         },
         {
           value: 'mOutPrice',
-          label: '售价'
+          label: '售价',
+          hidden: false
         }
       ]
     }
@@ -489,6 +504,11 @@ export default {
       })
     },
     handleClose(tag) {
+      this.options.map(item => {
+        if (tag.label === item.label) {
+          item.hidden = false
+        }
+      })
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
       // this.fetchAllData()
       this.fetchData()
@@ -506,6 +526,7 @@ export default {
         this.options.map(item => {
           if (item.value === this.selectValue) {
             str = item.label
+            item.hidden = true
           }
         })
         this.dynamicTags.push({
@@ -513,6 +534,7 @@ export default {
           value: this.selectValue,
           label: str
         })
+        this.selectValue = ''
         // this.fetchAllData()
         this.fetchData()
       }

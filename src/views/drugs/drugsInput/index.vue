@@ -354,6 +354,11 @@ export default {
               const result = res.data.result
               this.addDrugsForm.mName = result.name
               this.addDrugsForm.factory = result.company
+              this.$notify({
+                title: '提示',
+                message: '录入信息成功',
+                type: 'success'
+              });
             } else {
               this.$notify.info({
                 title: '提示',
@@ -366,6 +371,7 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.addDrugsForm.factory = ''
+      this.addDrugsForm.mRemark = ''
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
