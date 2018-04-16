@@ -212,11 +212,11 @@ export default {
     },
     fetchData() {
       this.listLoading = true
-      getList('doctor').then(response => {
-        this.list = response.data.data
-        this.listLoading = false
-        this.TimeCalculator(this.list)
-      })
+      // getList('doctor').then(response => {
+      //   this.list = response.data.data
+      //   this.listLoading = false
+      //   this.TimeCalculator(this.list)
+      // })
     },
     TimeCalculator(list) {
       list.map(item => {

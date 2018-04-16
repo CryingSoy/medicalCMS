@@ -5,8 +5,8 @@
         <div slot="header" class="clearfix">
           <span>学生信息</span>
           <el-button style="float: right;" size="small" type="primary" @click="queryCardId" icon="el-icon-search">读卡</el-button>
-          <el-button style="float: right; margin-right: 30px" size="small" type="primary" icon="el-icon-search">查询学号</el-button>
-          <el-input style="float: right; width:200px;" size="small"></el-input>
+          <el-button style="float: right; margin-right: 30px" size="small" type="primary" icon="el-icon-search" @click="queryStuId">查询学号</el-button>
+          <el-input style="float: right; width:200px;" size="small" placeholder="学号" v-model="_stuId"></el-input>
         </div>
         <el-form v-loading="loading" :model="studentInfo" ref="studentInfo">
           <el-row>
@@ -268,6 +268,11 @@
                 <el-input :autosize="{minRows: 3}" type="textarea" v-model="ruleForm.doctorRemark"></el-input>
               </el-col>
             </el-form-item>
+            <el-form-item label="请假备注" align="center">
+              <el-col :span="20">
+                <el-input :autosize="{minRows: 3}" type="textarea" v-model="ruleForm.restTime" placeholder="不请假则不用填写"></el-input>
+              </el-col>
+            </el-form-item>
             <el-form-item align="center">
               <el-button type="primary" @click="submitForm('ruleForm')">就诊完成</el-button>
               <el-button @click="resetForm('ruleForm')">重置</el-button>
@@ -494,7 +499,7 @@
 </template>
 
 <script>
-import { getStudentInfo, saveStudentInfo, getTreatInfoByParams, saveTreatInfo } from '@/api/treat'
+import { getStudentInfo, saveStudentInfo, getTreatInfoByParams, saveTreatInfo, getStudentInfoByParams } from '@/api/treat'
 import { getDrugsInfo } from '@/api/drugs'
 import { getClassify } from '@/api/other'
 import waves from '@/directive/waves' // 水波纹指令
@@ -514,6 +519,7 @@ export default {
       inputVisible: false,
       inputValue: '',
       selectValue: 'mBarcode',
+      _stuId: '',
       options: [
         {
           value: 'mBarcode',
@@ -708,6 +714,9 @@ export default {
     })
   },
   methods: {
+    addRest() {
+
+    },
     handleChange() {
       this.ruleForm.disease = this.diseaseSelect[this.diseaseSelect.length - 1]
     },
@@ -817,6 +826,36 @@ export default {
           })
       }
     },
+    queryStuId() {
+      getStudentInfoByParams({
+        params: JSON.stringify([{ name: 'stuId', word: this._stuId }])
+      })
+        .then(res => {
+          if (res.status === 200) {
+            if (res.data.code === 1) {
+              if (res.data.data.length > 0) {
+                this.$message({
+                  message: '查询成功',
+                  type: 'success'
+                })
+                this.isFirst = false
+                this.studentInfo = res.data.data[0]
+              } else {
+                this.isFirst = true
+                this.$message({
+                  message: '未查询到该学生的信息，该学生为第一次就诊。请填写学生基本信息，就诊成功后会录入该学生信息。',
+                  type: 'warning',
+                  duration: 5000
+                })
+              }
+            } else {
+              this.$message.error(res.data.msg)
+            }
+          } else {
+            this.$message.error(res.statusText)
+          }
+        })
+    },
     queryCardId() {
       this.resetForm('studentInfo')
       this.loading = true
@@ -874,7 +913,7 @@ export default {
                 doctor: this.ruleForm.doctorName,
                 totalPrice: this.totalMoney || '0',
                 doctorRemark: this.ruleForm.doctorRemark,
-                restTime: ''
+                restTime: this.ruleForm.restTime
               })
                 .then(res => {
                   if (res.data.code === 1) {

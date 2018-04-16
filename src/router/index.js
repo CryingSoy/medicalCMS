@@ -108,12 +108,12 @@ export const constantRouterMap = [
         component: () => import('@/views/user/admin-user/index'),
         meta: { title: '管理员', icon: 'people' }
       },
-      {
-        path: 'doctorinfo',
-        name: 'doctorinfo',
-        component: () => import('@/views/user/doctor-user/index'),
-        meta: { title: '校医', icon: 'table' }
-      },
+      // {
+      //   path: 'doctorinfo',
+      //   name: 'doctorinfo',
+      //   component: () => import('@/views/user/doctor-user/index'),
+      //   meta: { title: '校医', icon: 'table' }
+      // },
       {
         path: 'studentinfo',
         name: 'studentinfo',

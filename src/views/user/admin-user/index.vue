@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" :placeholder="'用户名'" v-model="listQuery.username">
+      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" :placeholder="'用户名'" v-model="username">
       </el-input>
-      <el-select clearable style="width: 90px" v-model="listQuery.status" class="filter-item" :placeholder="'级别'">
+      <!-- <el-select clearable style="width: 90px" v-model="listQuery.status" class="filter-item" :placeholder="'级别'">
         <el-option v-for="item in adminType" :key="item" :label="item === '超级管理员' ? '超级管理员' : '校医'" :value="item">
       </el-option>
-      </el-select>
+      </el-select> -->
       <!-- <el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.type" :placeholder="$t('table.type')">
         <el-option v-for="item in  calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key">
         </el-option>
@@ -37,7 +37,7 @@
           {{scope.row.level}}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="上一次修改密码成功时间" >
+      <el-table-column align="center" label="上一次操作时间" >
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
           <span>{{scope.row.lastUpdateTime}}</span>
@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { getList, resetPassword, removeUser, addUser } from '@/api/user'
+import { getList, resetPassword, removeUser, addUser, getAdminUserListByParams } from '@/api/user'
 import waves from '@/directive/waves' // 水波纹指令
 import MdInput from '@/components/MDinput'
 
@@ -164,7 +164,8 @@ export default {
         status: '',
         page: 1,
         limit: 20
-      }
+      },
+      username: ''
     }
   },
   components: {
@@ -277,39 +278,29 @@ export default {
       console.log('1')
     },
     handleFilter() {
-      // let del
-      // let queryList = this.list.map((item, value) => {
-      //   if (item.username.indexOf(this.listQuery.username) >= 0) {
-      //     if (this.listQuery.author === '') {
-      //       return item
-      //     } else if (item.author.indexOf(this.listQuery.author) >= 0) {
-      //       return item
-      //     }
-      //   }
-      //   if (item.author.indexOf(this.listQuery.author) >= 0) {
-      //     if (this.listQuery.username === '') {
-      //       return item
-      //     } else if (item.username.indexOf(this.listQuery.username) >= 0) {
-      //       return item
-      //     }
-      //   }
-      //   del.push(value)
-      // })
-      // console.log(queryList)
+      if (!this.username) {
+        this.fetchData()
+        return
+      }
+      this.listLoading = true
+      getAdminUserListByParams({
+        params: JSON.stringify([{ name: 'username', word: this.username }])
+      })
+        .then(res => {
+          this.list = res.data.data
+          this.listLoading = false
+          this.TimeCalculator(this.list)
+        })
     },
     fetchData() {
       this.listLoading = true
       getList('admin').then(response => {
-        this.list = response.data.data
-        // this.listLoading = false
-        // this.TimeCalculator(this.list)
-      })
-      getList('adminDoctor').then(response => {
-        response.data.data.map(item => {
-          this.list.push(item)
+        const temp = response.data.data
+        getList('adminDoctor').then(response => {
+          this.list = temp.concat(response.data.data)
+          this.listLoading = false
+          this.TimeCalculator(this.list)
         })
-        this.listLoading = false
-        this.TimeCalculator(this.list)
       })
     },
     TimeCalculator(list) {

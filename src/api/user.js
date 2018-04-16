@@ -34,3 +34,27 @@ export function addUser(username, password, type) {
     data
   })
 }
+
+export function getUserLists(params) {
+  return request({
+    url: '/user/getUserListByParams',
+    method: 'get',
+    params
+  })
+}
+
+export function resetPasswords(data) {
+  return request({
+    url: '/user/resetPasswords',
+    method: 'post',
+    data
+  })
+}
+
+export function getAdminUserListByParams(params) {
+  return request({
+    url: '/user/getAdminUserListByParams',
+    method: 'get',
+    params
+  })
+}
