@@ -8,6 +8,14 @@ export function saveDrugsInfo(data) {
   })
 }
 
+export function getOverdueByDay(params) {
+  return request({
+    url: '/drug/getOverdueByDay',
+    method: 'get',
+    params
+  })
+}
+
 export function getDrugsInfo(params, page, pageSize) {
   if (params === '[]') {
     return request({
