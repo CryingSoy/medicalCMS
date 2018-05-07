@@ -264,7 +264,6 @@ export default {
     const f = c.getSeconds() * 1000
     const g = c.getMilliseconds()
     const h = d + e + f + g
-    console.log(+c - h)
     this.selectDate(+c - h, 'all')
   },
   methods: {

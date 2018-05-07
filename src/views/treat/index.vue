@@ -4,8 +4,9 @@
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span>学生信息</span>
+          <el-button style="float: right; margin-left: 15px" size="small" type="primary" @click="resetForm('studentInfo')" icon="el-icon-search">重置</el-button>
           <el-button style="float: right;" size="small" type="primary" @click="queryCardId" icon="el-icon-search">读卡</el-button>
-          <el-button style="float: right; margin-right: 30px" size="small" type="primary" icon="el-icon-search" @click="queryStuId">查询学号</el-button>
+          <el-button style="float: right; margin-right: 5px" size="small" type="primary" icon="el-icon-search" @click="queryStuId">查询学号</el-button>
           <el-input style="float: right; width:200px;" size="small" placeholder="学号" v-model="stuIds"></el-input>
         </div>
         <el-form v-loading="loading" :model="studentInfo" ref="studentInfo">
@@ -859,6 +860,7 @@ export default {
       }
     },
     queryStuId() {
+      this.resetForm('studentInfo')
       getStudentInfoByParams({
         params: JSON.stringify([{ name: 'stuId', word: this.stuIds }])
       })

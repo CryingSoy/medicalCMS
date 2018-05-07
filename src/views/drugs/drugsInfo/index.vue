@@ -117,7 +117,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item prop="mBarcode" label="条形码" label-width="100px">
-              <el-input :disabled="true" v-model.number="addDrugsForm.mBarcode" auto-complete="off"></el-input>
+              <el-input :disabled="true" v-model="addDrugsForm.mBarcode" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="9">
@@ -243,7 +243,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addDrugsFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="resetForm('addDrugsForm')">重 置</el-button>
+        <!-- <el-button type="primary" @click="resetForm('addDrugsForm')">重 置</el-button> -->
         <el-button type="primary" @click="submitForm('addDrugsForm')">确认编辑</el-button>
       </div>
     </el-dialog>
@@ -273,10 +273,6 @@ export default {
       pageSize: 10,
       total: 0,
       addRules: {
-        mBarcode: [
-          { required: true, message: '请输入条形码', trigger: 'blur' },
-          { type: 'number', message: '条形码必须为数字' }
-        ],
         mName: [
           { required: true, message: '请输入药品名称', trigger: 'blur' }
         ],
@@ -294,10 +290,6 @@ export default {
         ],
         mTreatment: [
           { required: true, message: '请选择用药疗程', trigger: 'change' }
-        ],
-        mStock: [
-          { required: true, message: '请输入入库量', trigger: 'blur' },
-          { type: 'number', message: '入库量必须为数字' }
         ],
         mUnit: [
           { required: true, message: '请选择药品规格', trigger: 'change' }
@@ -337,6 +329,7 @@ export default {
         mBatch: '',
         factory: '',
         mInPrice: '',
+        mOutPrice: '',
         mStock: '',
         mClassify: [],
         mUnit: '',
@@ -474,7 +467,7 @@ export default {
         mOverdueTime: new Date(parseInt(form.mOverdueTime)),
         inputer: store.getters.name,
         mInPrice: +form.mInPrice,
-        mOutPrice: +form.mInPrice
+        mOutPrice: +form.mOutPrice
       }
     },
     resetForm(formName) {

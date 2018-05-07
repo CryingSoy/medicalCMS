@@ -258,7 +258,13 @@ export default {
     }
   },
   mounted() {
-    this.selectDate(new Date(), 'all')
+    const c = new Date()
+    const d = c.getHours() * 60 * 60 * 1000
+    const e = c.getMinutes() * 60 * 1000
+    const f = c.getSeconds() * 1000
+    const g = c.getMilliseconds()
+    const h = d + e + f + g
+    this.selectDate(+c - h, 'all')
   },
   methods: {
     pushArray(i) {
@@ -376,26 +382,31 @@ export default {
           for (const i of b) {
             const c = await this.pushArray(i)
             if (c.length) {
+              let tol1 = 0
+              let tol2 = 0
               for (const i of c) {
-                if (tag === 'all') {
+                if (tag === 'all') {     
                   if (i.useType === 'in') {
-                    this.xArray.push(parseInt(i.useNum))
+                    tol1 += parseInt(i.useNum)
+                    // this.xArray.push(parseInt(i.useNum))
                   } else if (i.useType === 'out') {
-                    this.yArray.push(parseInt(i.useNum))
+                    tol2 += parseInt(i.useNum)
+                    // this.yArray.push(parseInt(i.useNum))
                   }
                 } else {
                     if (this.selectName === i.mName) {
                       if (i.useType === 'in') {
-                      this.xArray.push(parseInt(i.useNum))
+                      tol1 += parseInt(i.useNum)
+                      // this.xArray.push(parseInt(i.useNum))
                     } else if (i.useType === 'out') {
-                      this.yArray.push(parseInt(i.useNum))
+                      tol2 += parseInt(i.useNum)
+                      // this.yArray.push(parseInt(i.useNum))
                     }
-                  } else {
-                    this.xArray.push(0)
-                    this.yArray.push(0)
                   }
                 }
               }
+              this.xArray.push(tol1)
+              this.yArray.push(tol2)
             } else {
               this.xArray.push(0)
               this.yArray.push(0)

@@ -250,7 +250,13 @@ export default {
     }
   },
   mounted() {
-    this.selectDate(new Date(), 'all')
+    const c = new Date()
+    const d = c.getHours() * 60 * 60 * 1000
+    const e = c.getMinutes() * 60 * 1000
+    const f = c.getSeconds() * 1000
+    const g = c.getMilliseconds()
+    const h = d + e + f + g
+    this.selectDate(+c - h, 'all')
   },
   methods: {
     pushArray(i) {
@@ -362,7 +368,7 @@ export default {
         }
       })
       
-      if (tag || this.selectName) {
+      if (1) {
         (async () => {
           this.listLoading = true
           for (const i of b) {

@@ -256,7 +256,13 @@ export default {
     }
   },
   mounted() {
-    this.selectDate(new Date(), 'all')
+    const c = new Date()
+    const d = c.getHours() * 60 * 60 * 1000
+    const e = c.getMinutes() * 60 * 1000
+    const f = c.getSeconds() * 1000
+    const g = c.getMilliseconds()
+    const h = d + e + f + g
+    this.selectDate(+c - h, 'all')
   },
   methods: {
     pushArray(i) {
@@ -377,10 +383,14 @@ export default {
               let tol = 0
               for (const i of c) {
                 if (tag === 'all') {
-                  tol += parseInt(i.useNum)
+                  if (i.useType === 'out') {
+                    tol += parseInt(i.useNum)
+                  }
                 } else {
                     if (this.selectName === i.mName) {
-                    tol += parseInt(i.useNum)
+                      if (i.useType === 'out') {
+                        tol += parseInt(i.useNum)
+                      }
                   }
                 }
               }
